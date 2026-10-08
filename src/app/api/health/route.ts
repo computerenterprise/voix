@@ -10,7 +10,7 @@ export async function GET() {
     APP_SECRET: (process.env.APP_SECRET?.length ?? 0) >= 32,
     ADMIN_PASSWORD_HASH: Boolean(process.env.ADMIN_PASSWORD_HASH?.startsWith("scrypt:")),
     CRON_SECRET: Boolean(process.env.CRON_SECRET),
-    NEXT_PUBLIC_SITE_URL: Boolean(process.env.NEXT_PUBLIC_SITE_URL),
+    SITE_URL: Boolean(process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL),
   };
   const configOk = Object.values(config).every(Boolean);
   try {
