@@ -12,6 +12,7 @@ export type SchoolLite = {
   sector: string;
   tracks: string[];
   department_name: string;
+  kind: string;
 };
 
 export type School = SchoolLite & { department_code: string; academy: string; hidden: boolean };
@@ -27,14 +28,14 @@ export async function searchSchools(q: string, limit = 10): Promise<{ results: S
   const digits = raw.replace(/\s/g, "");
   if (/^\d{2,5}$/.test(digits)) {
     const results = await sql<SchoolLite[]>`
-      select uai, name, city, postal_code, sector, tracks, department_name from schools
+      select uai, name, city, postal_code, sector, tracks, department_name, kind from schools
       where not hidden and postal_code like ${digits + "%"}
       order by postal_code, city, name limit ${limit}`;
     return { results, fuzzy: false };
   }
   if (/^\d{7}[a-z]$/i.test(digits)) {
     const results = await sql<SchoolLite[]>`
-      select uai, name, city, postal_code, sector, tracks, department_name from schools
+      select uai, name, city, postal_code, sector, tracks, department_name, kind from schools
       where not hidden and uai = ${digits.toUpperCase()}`;
     return { results, fuzzy: false };
   }
@@ -46,13 +47,13 @@ export async function searchSchools(q: string, limit = 10): Promise<{ results: S
   const patterns = tokens.map((t) => (t.length <= 3 ? "% " + t + "%" : "%" + t + "%"));
 
   const strict = await sql<SchoolLite[]>`
-    select uai, name, city, postal_code, sector, tracks, department_name from schools
+    select uai, name, city, postal_code, sector, tracks, department_name, kind from schools
     where not hidden and (' ' || search || ' ') like all(${patterns}::text[])
     order by similarity(search, ${full}) desc, name limit ${limit}`;
   if (strict.length) return { results: strict, fuzzy: false };
 
   const fuzzy = await sql<SchoolLite[]>`
-    select uai, name, city, postal_code, sector, tracks, department_name from schools
+    select uai, name, city, postal_code, sector, tracks, department_name, kind from schools
     where not hidden and word_similarity(${tokens.join(" ")}, search) >= 0.4
     order by word_similarity(${tokens.join(" ")}, search) + similarity(${tokens.join(" ")}, search) desc, name limit ${limit}`;
   return { results: fuzzy, fuzzy: true };
@@ -61,7 +62,7 @@ export async function searchSchools(q: string, limit = 10): Promise<{ results: S
 async function fetchSchool(uai: string): Promise<School | null> {
   if (!/^\d{7}[A-Z]$/.test(uai)) return null;
   const [s] = await sql<School[]>`
-    select uai, name, city, postal_code, department_code, department_name, academy, sector, tracks, hidden
+    select uai, name, city, postal_code, department_code, department_name, academy, sector, tracks, hidden, kind
     from schools where uai = ${uai}`;
   return s ?? null;
 }
@@ -135,7 +136,7 @@ async function computeSchoolResults(uai: string): Promise<SchoolResults> {
 export const getSchoolResultsCached = memo(computeSchoolResults, 15_000);
 export const getSchoolResultsFresh = computeSchoolResults;
 
-export type HomeStats = { participations: number; schools: number; moderated: number; totalSchools: number };
+export type HomeStats = { participations: number; schools: number; moderated: number; totalSchools: number; totalUniversities: number };
 
 export const getHomeStats = memo(
   async (): Promise<HomeStats> => {
@@ -144,7 +145,8 @@ export const getHomeStats = memo(
         (select count(*)::int from participations where status = 'counted') as participations,
         (select count(distinct school_uai)::int from participations where status = 'counted') as schools,
         (select count(*)::int from reports where status = 'approved') as moderated,
-        (select count(*)::int from schools where not hidden) as "totalSchools"`;
+        (select count(*)::int from schools where not hidden and kind = 'lycee') as "totalSchools",
+        (select count(*)::int from schools where not hidden and kind = 'universite') as "totalUniversities"`;
     return row;
   },
   30_000,

@@ -36,7 +36,7 @@ export default async function Home() {
           <div className="grid grid-cols-3 gap-3">
             {[
               [fmt(stats.participations), stats.participations > 1 ? "participations comptabilisées" : "participation comptabilisée"],
-              [fmt(stats.schools), stats.schools > 1 ? "lycées concernés" : "lycée concerné"],
+              [fmt(stats.schools), stats.schools > 1 ? "établissements concernés" : "établissement concerné"],
               [fmt(stats.moderated), stats.moderated > 1 ? "témoignages relus et publiés" : "témoignage relu et publié"],
             ].map(([n, l]) => (
               <div key={l} className="card px-3 py-6 text-center sm:py-8">
@@ -49,12 +49,12 @@ export default async function Home() {
           <div className="card px-6 py-8 text-center">
             <p className="font-display text-2xl font-semibold">Les premiers résultats s&apos;afficheront ici.</p>
             <p className="mt-2 text-sm text-muted">
-              {stats ? `${fmt(stats.totalSchools)} lycées référencés. ` : ""}Les chiffres viennent uniquement des participations réelles.
+              {stats ? `${fmt(stats.totalSchools)} lycées et ${fmt(stats.totalUniversities)} universités référencés. ` : ""}Les chiffres viennent uniquement des participations réelles.
             </p>
           </div>
         )}
         <p className="mt-3 text-center text-xs text-muted">
-          Chiffres en direct. Une participation n&apos;est pas un élève vérifié.{" "}
+          Chiffres en direct. Une participation n&apos;est pas une personne vérifiée.{" "}
           <Link href="/a-propos#limites" className="link">Nos limites</Link>
         </p>
       </section>
@@ -63,9 +63,9 @@ export default async function Home() {
         <h2 className="font-display text-center text-3xl font-bold sm:text-5xl">Comment ça marche.</h2>
         <ol className="mt-10 grid gap-3 sm:grid-cols-3">
           {[
-            ["Trouve ton lycée.", "Par son nom, sa ville ou son code postal. Tous les lycées de France sont référencés."],
+            ["Trouve ton établissement.", "Par son nom, sa ville ou son code postal. Tous les lycées et toutes les universités de France sont référencés."],
             ["Dis ce qui coince.", "Soutiens une préoccupation existante ou ajoute la tienne. Aucun nom, aucun compte."],
-            ["Partage la page.", "Plus il y a de participations, plus les priorités de ton lycée sont lisibles."],
+            ["Partage la page.", "Plus il y a de participations, plus les priorités de ton établissement sont lisibles."],
           ].map(([t, d], i) => (
             <li key={t} className="card p-7">
               <span className="text-sm font-semibold text-signal">0{i + 1}</span>

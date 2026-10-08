@@ -41,7 +41,11 @@ export default function Legal() {
         réutilisées selon leur licence (ci-dessous). Les messages publiés restent ceux de leurs auteurs, anonymes.
       </p>
       <h2>Données des établissements</h2>
-      <p>Annuaire de l&apos;Éducation, ministère de l&apos;Éducation nationale, data.education.gouv.fr, Licence Ouverte 2.0.</p>
+      <p>
+        Lycées : Annuaire de l&apos;Éducation, ministère de l&apos;Éducation nationale, data.education.gouv.fr, Licence
+        Ouverte 2.0. Universités : « Principaux établissements d&apos;enseignement supérieur », ministère de
+        l&apos;Enseignement supérieur et de la Recherche, data.enseignementsup-recherche.gouv.fr, Licence Ouverte 2.0.
+      </p>
     </article>
   );
 }

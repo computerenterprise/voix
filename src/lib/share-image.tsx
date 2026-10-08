@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { getSchool, getSchoolResultsCached } from "./schools";
 import { categoryLabel, MIN_FOR_PERCENT } from "./categories";
+import { words } from "./kind";
 import { siteUrl } from "./site";
 
 let fonts: Promise<{ name: string; data: Buffer; weight: 500 | 600 | 700; style: "normal" }[]> | null = null;
@@ -54,7 +55,7 @@ export async function renderShareImage(uaiRaw: string, format: "og" | "story") {
     return (
       <div key={c.key} style={{ display: "flex", flexDirection: "column", marginTop: story ? 44 : 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: story ? 46 : 24, color: INK }}>{categoryLabel(c.key)}</span>
+          <span style={{ fontFamily: "Inter", fontWeight: 600, fontSize: story ? 46 : 24, color: INK }}>{categoryLabel(c.key, school.kind)}</span>
           <span style={{ fontFamily: "Inter", fontWeight: 700, fontSize: story ? 64 : 30, color: INK }}>{value}</span>
         </div>
         <div style={{ display: "flex", height: story ? 26 : 10, borderRadius: 999, background: TRACK, marginTop: story ? 8 : 4 }}>
@@ -75,7 +76,7 @@ export async function renderShareImage(uaiRaw: string, format: "og" | "story") {
           <span style={{ fontFamily: "Inter", fontWeight: 700, fontSize: nameSize, lineHeight: 1.05, color: INK, letterSpacing: -1.5 }}>{school.name}</span>
           <span style={{ fontSize: story ? 40 : 24, color: MUTED, marginTop: story ? 22 : 10, fontWeight: 500 }}>{school.city}</span>
           <span style={{ fontSize: story ? 50 : 26, color: INK, marginTop: story ? 60 : 14, fontWeight: 500 }}>
-            {r.total > 0 ? "« Voici les préoccupations exprimées dans notre lycée. »" : "« Notre lycée peut enfin se faire entendre. »"}
+            {r.total > 0 ? `« Voici les préoccupations exprimées dans ${words(school.kind).our}. »` : school.kind === "universite" ? "« Notre université peut enfin se faire entendre. »" : "« Notre lycée peut enfin se faire entendre. »"}
           </span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, marginTop: story ? 40 : 4 }}>
@@ -88,7 +89,7 @@ export async function renderShareImage(uaiRaw: string, format: "og" | "story") {
             {`${r.total} participation${r.total > 1 ? "s" : ""} · non représentatif · ${host}`}
           </span>
           <div style={{ display: "flex", background: SIGNAL, color: "#fff", borderRadius: 999, padding: story ? "28px 44px" : "14px 26px", fontSize: story ? 40 : 24, fontWeight: 600 }}>
-            Faire entendre mon lycée
+            Faire entendre {words(school.kind).my}
           </div>
         </div>
       </div>

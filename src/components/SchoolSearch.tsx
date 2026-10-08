@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Result = { uai: string; name: string; city: string; postal_code: string; sector: string; tracks: string[]; department_name: string };
+type Result = { uai: string; name: string; city: string; postal_code: string; sector: string; tracks: string[]; department_name: string; kind?: string };
 
 export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: boolean; size?: "lg" | "md" }) {
   const router = useRouter();
@@ -66,7 +66,7 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
 
   return (
     <div className="relative w-full">
-      <label htmlFor={id} className="sr-only">Nom du lycée, ville ou code postal</label>
+      <label htmlFor={id} className="sr-only">Lycée ou université, ville ou code postal</label>
       <div className={`flex items-center gap-3 rounded-2xl bg-card ${big ? "h-14 px-5" : "h-12 px-4"} ring-1 ring-transparent transition-shadow focus-within:bg-white focus-within:ring-signal focus-within:shadow-[0_0_0_4px_rgb(0_113_227/0.15)]`}>
         <svg aria-hidden width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="shrink-0 text-muted"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input
@@ -82,7 +82,7 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
           spellCheck={false}
           enterKeyHint="search"
           autoFocus={autoFocus}
-          placeholder="Nom du lycée, ville ou code postal"
+          placeholder="Lycée ou université, ville ou code postal"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={onKey}
@@ -101,14 +101,14 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
           {state === "error" && <p className="p-5 text-sm text-signal-ink">{error}</p>}
           {state === "done" && results.length === 0 && (
             <div className="p-5 text-sm text-ink-2">
-              <p className="font-semibold">Aucun lycée trouvé pour « {q.trim()} ».</p>
+              <p className="font-semibold">Aucun établissement trouvé pour « {q.trim()} ».</p>
               <p className="mt-1 text-muted">Essaie avec la ville, le code postal, ou une partie du nom seulement (ex. « Hugo Besançon »).</p>
             </div>
           )}
           {results.length > 0 && (
             <>
               {fuzzy && <p className="px-5 pt-4 text-xs font-medium text-muted">Résultats approchants</p>}
-              <ul id={`${id}-list`} role="listbox" aria-label="Lycées" className="max-h-[60vh] overflow-auto py-2">
+              <ul id={`${id}-list`} role="listbox" aria-label="Établissements" className="max-h-[60vh] overflow-auto py-2">
                 {results.map((r, i) => (
                   <li
                     key={r.uai}
@@ -119,7 +119,10 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
                     onClick={() => go(r)}
                     className={`mx-2 cursor-pointer rounded-xl px-3 py-2.5 ${i === active ? "bg-card" : ""}`}
                   >
-                    <p className="font-medium leading-tight">{r.name}</p>
+                    <p className="font-medium leading-tight">
+                      {r.kind === "universite" && <span className="chip mr-1.5 bg-[#e8f2ff] align-[2px] text-signal">Université</span>}
+                      {r.name}
+                    </p>
                     <p className="mt-0.5 text-sm text-muted">
                       {r.city} {r.postal_code && `· ${r.postal_code}`} {r.sector && `· ${r.sector}`}
                       {r.tracks.length > 0 && ` · voie ${r.tracks.join(", ")}`}
@@ -128,7 +131,7 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
                 ))}
               </ul>
               {results.length >= 10 && (
-                <p className="border-t border-line px-5 py-3 text-xs text-muted">Beaucoup de lycées portent ce nom : ajoute la ville ou le code postal.</p>
+                <p className="border-t border-line px-5 py-3 text-xs text-muted">Beaucoup d&apos;établissements portent ce nom : ajoute la ville ou le code postal.</p>
               )}
             </>
           )}

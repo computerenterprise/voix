@@ -7,7 +7,7 @@ import { AreaExplorer, DailyChart, HBarChart } from "@/components/Charts";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Tableau national",
-  description: "Les préoccupations exprimées par les lycéens sur VOIX, agrégées par département et par ville.",
+  description: "Les préoccupations exprimées par les lycéens et les étudiants sur VOIX, agrégées par département et par ville.",
 };
 
 export default async function Dashboard() {
@@ -18,7 +18,7 @@ export default async function Dashboard() {
     <div className="mx-auto max-w-5xl px-4 pt-10">
       <h1 className="font-display text-4xl font-bold sm:text-6xl">Tableau national</h1>
       <p className="mt-3 max-w-2xl text-ink-2">
-        Ce que signalent les lycéens, agrégé. Pas de classement des lycées : un lycée avec plus de participations
+        Ce que signalent les lycéens et les étudiants, agrégé. Pas de classement des établissements : un établissement avec plus de participations
         n&apos;est pas « pire » qu&apos;un autre, il est simplement plus mobilisé sur VOIX.
       </p>
 
@@ -29,7 +29,7 @@ export default async function Dashboard() {
         </div>
         <div className="card p-5">
           <p className="font-display text-4xl font-bold">{d.schools.toLocaleString("fr-FR")}</p>
-          <p className="text-sm text-muted">{d.schools > 1 ? "lycées avec au moins une participation" : "lycée avec au moins une participation"}</p>
+          <p className="text-sm text-muted">{d.schools > 1 ? "établissements avec au moins une participation" : "établissement avec au moins une participation"}</p>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ export default async function Dashboard() {
       </section>
 
       <p className="mt-8 text-sm text-muted">
-        Les participations ne sont pas des élèves vérifiés et ne constituent pas un échantillon représentatif.{" "}
+        Les participations ne sont pas des personnes vérifiées et ne constituent pas un échantillon représentatif.{" "}
         <Link href="/a-propos#limites" className="link">Méthode et limites</Link>
       </p>
     </div>

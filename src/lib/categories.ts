@@ -1,16 +1,20 @@
 export const CATEGORIES = [
-  { key: "profs_absents", label: "Professeurs absents", short: "Profs absents", emoji: "🧑‍🏫" },
-  { key: "classes_surchargees", label: "Classes surchargées", short: "Classes surchargées", emoji: "👥" },
-  { key: "batiments", label: "État des bâtiments", short: "Bâtiments", emoji: "🏚️" },
-  { key: "equipements", label: "Équipements et matériel", short: "Équipements", emoji: "🖥️" },
-  { key: "orientation", label: "Orientation et Parcoursup", short: "Orientation", emoji: "🧭" },
-  { key: "vie_scolaire", label: "Conditions de vie scolaire", short: "Vie scolaire", emoji: "🍽️" },
-  { key: "autre", label: "Autre problème", short: "Autre", emoji: "💬" },
+  { key: "profs_absents", label: "Professeurs absents", uni: "Cours annulés, enseignants absents", short: "Profs absents", emoji: "🧑‍🏫" },
+  { key: "classes_surchargees", label: "Classes surchargées", uni: "Amphis et TD surchargés", short: "Classes surchargées", emoji: "👥" },
+  { key: "batiments", label: "État des bâtiments", uni: "État des bâtiments", short: "Bâtiments", emoji: "🏚️" },
+  { key: "equipements", label: "Équipements et matériel", uni: "Équipements et matériel", short: "Équipements", emoji: "🖥️" },
+  { key: "orientation", label: "Orientation et Parcoursup", uni: "Orientation, stages et poursuite d'études", short: "Orientation", emoji: "🧭" },
+  { key: "vie_scolaire", label: "Conditions de vie scolaire", uni: "Vie étudiante (restauration, logement…)", short: "Vie scolaire", emoji: "🍽️" },
+  { key: "autre", label: "Autre problème", uni: "Autre problème", short: "Autre", emoji: "💬" },
 ] as const;
 
 export type CategoryKey = (typeof CATEGORIES)[number]["key"];
 export const CATEGORY_KEYS = CATEGORIES.map((c) => c.key) as CategoryKey[];
-export const categoryLabel = (k: string) => CATEGORIES.find((c) => c.key === k)?.label ?? k;
+/** Libellé d'une préoccupation ; formulé pour l'université quand `kind` vaut « universite ». */
+export const categoryLabel = (k: string, kind?: string) => {
+  const c = CATEGORIES.find((x) => x.key === k);
+  return c ? (kind === "universite" ? c.uni : c.label) : k;
+};
 export const isCategory = (k: string): k is CategoryKey => (CATEGORY_KEYS as string[]).includes(k);
 
 export const CONCERN_STATUSES = {

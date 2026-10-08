@@ -55,7 +55,7 @@ export default async function Suspicious() {
             <li key={r.id} className="card flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
               <div>
                 <p className="font-semibold">#{r.id} · {r.name} <span className="chip ml-1 bg-paper-2">{STATUS[r.status] ?? r.status}</span></p>
-                <p className="text-muted">{r.created_at.toLocaleString("fr-FR")} · {r.categories.map(categoryLabel).join(", ")}</p>
+                <p className="text-muted">{r.created_at.toLocaleString("fr-FR")} · {r.categories.map((c) => categoryLabel(c)).join(", ")}</p>
                 <p className="mt-1 flex flex-wrap gap-1">{r.flags.map((f) => <span key={f} className="chip bg-signal-soft text-signal-ink">{FLAGS[f] ?? f}</span>)}</p>
               </div>
               <div className="flex gap-2">

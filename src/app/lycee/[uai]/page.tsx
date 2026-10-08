@@ -6,6 +6,7 @@ import { myCategories } from "@/lib/mine";
 import { CATEGORIES, CONCERN_STATUSES, MIN_FOR_PERCENT, categoryLabel } from "@/lib/categories";
 import { SupportButton } from "@/components/SupportButton";
 import { ShareBox } from "@/components/ShareBox";
+import { words } from "@/lib/kind";
 import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -15,9 +16,10 @@ type Props = { params: Promise<{ uai: string }>; searchParams: Promise<{ merci?:
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { uai } = await params;
   const school = await getSchool(uai.toUpperCase());
-  if (!school || school.hidden) return { title: "Lycée introuvable" };
+  if (!school || school.hidden) return { title: "Établissement introuvable" };
   const title = `${school.name} (${school.city})`;
-  const description = `Voici les préoccupations exprimées par les élèves du ${school.name}. Fais entendre ton lycée sur VOIX.`;
+  const w = words(school.kind);
+  const description = `Voici les préoccupations exprimées par ${w.peopleOf(school.name)}. Fais entendre ${w.your} sur VOIX.`;
   const image = `/lycee/${school.uai}/og`;
   return {
     title,
@@ -36,6 +38,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
   const { merci, ecrit, verif } = await searchParams;
   const school = await getSchool(uai);
   if (!school || school.hidden) notFound();
+  const w = words(school.kind);
 
   // Juste après une participation, on lit les résultats frais pour que la personne voie l'effet de sa voix.
   const [results, mine] = await Promise.all([merci ? getSchoolResultsFresh(uai) : getSchoolResultsCached(uai), myCategories(uai)]);
@@ -52,18 +55,19 @@ export default async function SchoolPage({ params, searchParams }: Props) {
           </div>
           <p className="font-display mt-4 text-3xl font-bold">{verif ? "Merci, ta voix est enregistrée." : "Merci, ta voix est comptée."}</p>
           <p className="mx-auto mt-2 max-w-md leading-relaxed text-white/70">
-            {verif ? "Beaucoup de participations arrivent de la même connexion pour ce lycée : la tienne sera comptée après une vérification anti-triche. " : ""}
+            {verif ? `Beaucoup de participations arrivent de la même connexion pour ${w.the} : la tienne sera comptée après une vérification anti-triche. ` : ""}
             {ecrit ? "Ton message sera relu par l'équipe avant toute publication. " : ""}
-            Plus vous êtes nombreux, plus les priorités de ton lycée sont lisibles. Partage la page à ta classe.
+            Plus vous êtes nombreux, plus les priorités de {w.your} sont lisibles. Partage la page à ta classe.
           </p>
           <div className="mt-6 flex justify-center [&_.btn-ghost]:bg-white/10 [&_.btn-ghost]:text-white [&_.btn-ghost:hover]:bg-white/20 [&_.btn-dark]:bg-signal [&_.btn-dark:hover]:bg-[var(--signal-hover)]">
-            <ShareBox url={url} name={school.name} />
+            <ShareBox url={url} name={school.name} kind={school.kind} />
           </div>
         </div>
       )}
 
       <div className="text-center">
         <p className="rise text-sm text-muted">
+          {school.kind === "universite" && "Université · "}
           {school.city}
           {school.department_name && ` · ${school.department_name}`}
           {school.sector && ` · ${school.sector}`}
@@ -77,14 +81,14 @@ export default async function SchoolPage({ params, searchParams }: Props) {
           {results.verifying > 0 && (
             <p className="mt-1 text-sm text-muted">+ {results.verifying.toLocaleString("fr-FR")} en cours de vérification</p>
           )}
-          <Link href={`/a-propos#limites`} className="link mt-1 inline-block text-sm">Non représentatif de tous les élèves</Link>
+          <Link href={`/a-propos#limites`} className="link mt-1 inline-block text-sm">Non représentatif de tous les {w.people}</Link>
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-3">
           <Link href={`/lycee/${uai}/participer`} className="btn btn-primary w-full max-w-xs">
-            {mine.length ? "Ajouter un signalement" : "Faire entendre mon lycée"}
+            {mine.length ? "Ajouter un signalement" : `Faire entendre ${w.my}`}
           </Link>
-          {!merci && <ShareBox url={url} name={school.name} compact />}
+          {!merci && <ShareBox url={url} name={school.name} kind={school.kind} compact />}
         </div>
       </div>
 
@@ -92,7 +96,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
         <h2 id="prio" className="font-display text-3xl font-bold">Préoccupations signalées.</h2>
         {results.total === 0 ? (
           <p className="mt-2 text-muted">
-            Personne n&apos;a encore participé pour ce lycée. Sois la première voix : soutiens une préoccupation ci-dessous.
+            Personne n&apos;a encore participé pour {w.the}. Sois la première voix : soutiens une préoccupation ci-dessous.
           </p>
         ) : !showPercent ? (
           <p className="mt-2 text-sm text-muted">
@@ -109,7 +113,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
                 <div className="flex min-w-0 items-start gap-3">
                   <span aria-hidden className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-xl">{emoji(c.key)}</span>
                   <div className="min-w-0">
-                    <p className="text-[1.0625rem] font-semibold leading-tight">{categoryLabel(c.key)}</p>
+                    <p className="text-[1.0625rem] font-semibold leading-tight">{categoryLabel(c.key, school.kind)}</p>
                     <p className="mt-1 text-sm text-muted">
                       {c.supports} soutien{c.supports > 1 ? "s" : ""}
                       {c.reports > 0 && ` · ${c.reports} signalement${c.reports > 1 ? "s" : ""} écrit${c.reports > 1 ? "s" : ""}`}
@@ -136,7 +140,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
                 <span className={`chip ${c.status ? "bg-ok-soft text-ok" : "bg-white text-muted"}`}>
                   {c.status ? CONCERN_STATUSES[c.status] : "Pas encore transmis"}
                 </span>
-                <SupportButton uai={uai} category={c.key} supported={mine.includes(c.key)} label={categoryLabel(c.key)} />
+                <SupportButton uai={uai} category={c.key} supported={mine.includes(c.key)} label={categoryLabel(c.key, school.kind)} />
               </div>
               {c.statusNote && <p className="mt-2 text-sm text-ink-2">{c.statusNote}</p>}
             </li>
@@ -151,7 +155,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
           <ul className="mt-6 grid gap-3">
             {results.testimonies.map((t, i) => (
               <li key={i} className="card p-6">
-                <p className="text-sm font-medium text-signal">{categoryLabel(t.category)}</p>
+                <p className="text-sm font-medium text-signal">{categoryLabel(t.category, school.kind)}</p>
                 <blockquote className="font-display mt-2 text-xl font-medium leading-snug">« {t.body} »</blockquote>
               </li>
             ))}
@@ -167,10 +171,10 @@ export default async function SchoolPage({ params, searchParams }: Props) {
       <section className="mt-16 border-t border-line pt-6 text-sm text-muted">
         <h2 className="font-semibold text-ink">Comment lire ces chiffres</h2>
         <ul className="mt-2 list-disc space-y-1 pl-5 leading-relaxed">
-          <li>Une participation correspond à un navigateur, pas à un élève vérifié. Ce n&apos;est pas un sondage représentatif.</li>
-          <li>Anti-triche : un navigateur ne compte qu&apos;une fois par lycée, chaque envoi passe une vérification anti-robot, et quand beaucoup de navigateurs votent depuis la même connexion, les voix supplémentaires attendent une vérification avant d&apos;être comptées.</li>
+          <li>Une participation correspond à un navigateur, pas à une personne vérifiée. Ce n&apos;est pas un sondage représentatif.</li>
+          <li>Anti-triche : un navigateur ne compte qu&apos;une fois par établissement, chaque envoi passe une vérification anti-robot, et quand beaucoup de navigateurs votent depuis la même connexion, les voix supplémentaires attendent une vérification avant d&apos;être comptées.</li>
           <li>Les participations suspectes sont contrôlées et peuvent être retirées du décompte.</li>
-          <li>L&apos;état de traitement est mis à jour par l&apos;équipe VOIX quand une démarche est faite auprès du lycée.</li>
+          <li>L&apos;état de traitement est mis à jour par l&apos;équipe VOIX quand une démarche est faite auprès de l&apos;établissement.</li>
         </ul>
         <p className="mt-3">
           Un contenu pose problème ? <Link className="link" href={`/signaler?page=/lycee/${uai}`}>Signale-le</Link>.

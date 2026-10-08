@@ -33,11 +33,25 @@ test("recherche : autocomplétion, homonymes, fautes de frappe, code postal", as
   await box.fill("99300");
   await expect(page.getByRole("option")).toHaveCount(1);
   await box.fill("zzzzzz");
-  await expect(page.getByText(/Aucun lycée trouvé/)).toBeVisible();
+  await expect(page.getByText(/Aucun établissement trouvé/)).toBeVisible();
   await box.fill("villefictive curie");
   await page.getByRole("option").first().click();
   await expect(page).toHaveURL(/\/lycee\/9990003C$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Marie-Curie");
+});
+
+test("universités : recherche, page et vocabulaire adaptés", async ({ page }) => {
+  await page.goto("/recherche");
+  await page.getByRole("combobox").fill("universite villefictive");
+  const opt = page.getByRole("option").first();
+  await expect(opt).toContainText("Université Fictive de Villefictive");
+  await expect(page.getByRole("option")).toHaveCount(1); // les écoles ne sont pas importées
+  await opt.click();
+  await expect(page).toHaveURL(/\/lycee\/9990101U$/);
+  await expect(page.getByText("Université · Villefictive")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Faire entendre mon université" })).toBeVisible();
+  await expect(page.getByText("Amphis et TD surchargés")).toBeVisible();
+  await expect(page.getByText("Non représentatif de tous les étudiants")).toBeVisible();
 });
 
 test("participation complète, texte protégé, doublon bloqué", async ({ page }) => {
@@ -191,7 +205,7 @@ test("partage : lien unique, Open Graph et images", async ({ page, request }) =>
 test("tableau national et pages légales", async ({ page }) => {
   await page.goto("/tableau");
   await expect(page.getByRole("heading", { name: "Préoccupations citées" })).toBeVisible();
-  await expect(page.getByText("Pas de classement des lycées", { exact: false })).toBeVisible();
+  await expect(page.getByText("Pas de classement des établissements", { exact: false })).toBeVisible();
   for (const p of ["/a-propos", "/confidentialite", "/mentions-legales", "/charte"]) {
     const r = await page.goto(p);
     expect(r?.status()).toBe(200);

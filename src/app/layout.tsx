@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: "VOIX — Ton lycée. Ta voix.", template: "%s · VOIX" },
   description:
-    "Signale ce qui ne fonctionne pas dans ton lycée, soutiens les préoccupations des autres élèves et découvre les priorités de ton établissement. Plateforme indépendante.",
+    "Signale ce qui ne fonctionne pas dans ton lycée ou ton université, soutiens les préoccupations des autres et découvre les priorités de ton établissement. Plateforme indépendante.",
   openGraph: { siteName: "VOIX", locale: "fr_FR", type: "website" },
   twitter: { card: "summary_large_image" },
 };
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/a-propos" className="rounded-full px-1.5 py-2 transition-colors hover:text-ink min-[400px]:px-2 sm:px-3">À propos</Link>
               <Link href="/recherche" className="ml-1 inline-flex h-8 items-center gap-1.5 rounded-full bg-signal px-3 font-medium text-white sm:px-3.5 transition-colors hover:bg-[var(--signal-hover)]">
                 <svg aria-hidden width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-                Mon lycée
+                Rechercher
               </Link>
             </nav>
           </div>

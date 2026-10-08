@@ -124,7 +124,7 @@ export function AreaExplorer({ areas, kind }: { areas: Area[]; kind: "départeme
                 </td>
                 <td className="py-3 pr-3 tabular-nums">
                   {a.total.toLocaleString("fr-FR")}
-                  <span className="block text-xs text-muted">{a.schools} lycée{a.schools > 1 ? "s" : ""}</span>
+                  <span className="block text-xs text-muted">{a.schools} établissement{a.schools > 1 ? "s" : ""}</span>
                 </td>
                 <td className="py-3">
                   {a.top.map((t) => (

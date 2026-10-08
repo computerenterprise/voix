@@ -56,3 +56,11 @@ Parcours couverts :
 - Au-delà de 3 navigateurs différents depuis la même connexion, le même jour, pour le même lycée : les nouvelles participations passent « en vérification » et ne sont pas comptées. La page du lycée affiche « + N en cours de vérification ». L'admin peut valider ou suspendre le groupe.
 - Limites connues : changer de connexion (wifi ↔ 4G) permet quelques voix de plus. Sans identification des élèves, la triche est limitée, pas impossible.
 - Tests : 14/14 e2e (dont « triche : nouveaux navigateurs en série » et « anti-robot : preuve de travail obligatoire, non rejouable, liée au lycée »), 5/5 unitaires.
+
+## Universités (2026-10-08)
+
+- Source : « Principaux établissements d'enseignement supérieur » (MESR), 245 lignes ; 72 universités importées
+  (type « Université » + établissements dont le nom commence par « Université ») ; écoles non importées.
+- Recherche vérifiée sur les vraies données : « sorbonne », « universite lyon » (Lyon 1, 2, 3), « fac bordeaux ».
+- Vocabulaire adapté sur les pages d'université (étudiants, amphis et TD, vie étudiante, image de partage).
+- Tests : 15/15 e2e (nouveau test « universités : recherche, page et vocabulaire adaptés »), 5/5 unitaires.

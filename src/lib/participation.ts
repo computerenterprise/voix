@@ -40,7 +40,7 @@ export async function submitParticipation(
   ctx: { deviceHash: string; ipHash: string; newDevice: boolean },
 ): Promise<SubmitResult> {
   const [school] = await sql<{ uai: string }[]>`select uai from schools where uai = ${input.uai} and not hidden`;
-  if (!school) return { ok: false, status: 404, error: "Lycée introuvable." };
+  if (!school) return { ok: false, status: 404, error: "Établissement introuvable." };
 
   let reportFlags: string[] = [];
   if (input.report) {
@@ -99,7 +99,7 @@ export async function submitParticipation(
     if (input.report) {
       const [{ n }] = await tx<{ n: number }[]>`select count(*)::int as n from reports where participation_id = ${p.id}`;
       if (n >= MAX_REPORTS_PER_DEVICE_SCHOOL) {
-        throw new LimitError("Tu as déjà envoyé plusieurs signalements écrits pour ce lycée.");
+        throw new LimitError("Tu as déjà envoyé plusieurs signalements écrits pour cet établissement.");
       }
       // Le texte libre est TOUJOURS en attente de modération.
       await tx`

@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/categories";
+import { CATEGORIES, categoryLabel } from "@/lib/categories";
 import { consumeProof, prepareProof } from "@/lib/pow-client";
 
-export function ParticipateForm({ uai, already }: { uai: string; already: string[] }) {
+export function ParticipateForm({ uai, already, kind }: { uai: string; already: string[]; kind?: string }) {
   const router = useRouter();
   const startedAt = useRef(Date.now());
   const [selected, setSelected] = useState<string[]>([]);
@@ -71,7 +71,7 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
               >
                 <input type="checkbox" className="sr-only" checked={on} onChange={() => toggle(c.key)} />
                 <span aria-hidden className="text-xl">{c.emoji}</span>
-                <span className="flex-1 text-[1.0625rem] font-medium">{c.label}</span>
+                <span className="flex-1 text-[1.0625rem] font-medium">{categoryLabel(c.key, kind)}</span>
                 {was && !on && <span className="chip bg-ok-soft text-ok">déjà soutenu</span>}
                 <span aria-hidden className={`grid h-6 w-6 place-items-center rounded-full border-2 transition-colors ${on ? "border-signal bg-signal text-white" : "border-line bg-white"}`}>
                   {on && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"/></svg>}
@@ -92,7 +92,7 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
           <div className="mt-3 rounded-2xl bg-card p-4">
             <div className="rounded-xl bg-white p-3 text-sm text-ink-2">
               <p className="font-semibold text-ink">Décris un problème, pas une personne.</p>
-              <p className="mt-0.5">Pas de nom (élève, prof, personnel), pas de contact, pas d&apos;insulte. Ton message est relu avant toute publication et peut être refusé.</p>
+              <p className="mt-0.5">Pas de nom (élève, étudiant, prof, personnel), pas de contact, pas d&apos;insulte. Ton message est relu avant toute publication et peut être refusé.</p>
             </div>
             {cats.length > 1 && (
               <label className="mt-3 block text-sm font-semibold">
@@ -103,7 +103,7 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
                   onChange={(e) => setTextCat(e.target.value)}
                 >
                   {cats.map((k) => (
-                    <option key={k} value={k}>{CATEGORIES.find((c) => c.key === k)?.label}</option>
+                    <option key={k} value={k}>{categoryLabel(k, kind)}</option>
                   ))}
                 </select>
               </label>
@@ -135,7 +135,7 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
           {sending ? "Envoi…" : cats.length ? `Envoyer (${cats.length})` : "Choisis au moins une préoccupation"}
         </button>
         <p className="mt-2 text-center text-xs text-muted">
-          Un seul décompte par navigateur et par lycée. <Link href="/confidentialite" className="link">Ce que nous enregistrons</Link>
+          Un seul décompte par navigateur et par établissement. <Link href="/confidentialite" className="link">Ce que nous enregistrons</Link>
         </p>
       </div>
     </form>
