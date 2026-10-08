@@ -127,6 +127,9 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
                   </li>
                 ))}
               </ul>
+              {results.length >= 10 && (
+                <p className="border-t border-line px-5 py-3 text-xs text-muted">Beaucoup de lycées portent ce nom : ajoute la ville ou le code postal.</p>
+              )}
             </>
           )}
         </div>

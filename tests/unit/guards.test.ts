@@ -31,6 +31,7 @@ test("normalisation et jetons de recherche", () => {
   assert.equal(normalize("Lycée Saint-Étienne d'Œuf"), "lycee saint etienne d oeuf");
   assert.deepEqual(queryTokens("Lycée général Victor-Hugo"), ["victor", "hugo"]);
   assert.deepEqual(queryTokens("lycée"), ["lycee"]);
+  assert.deepEqual(queryTokens("Henri 4"), ["henri", "iv"]);
 });
 
 test("CSV : guillemets, séparateurs et BOM", () => {

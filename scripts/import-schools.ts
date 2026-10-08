@@ -42,6 +42,9 @@ type Row = {
 };
 const out = new Map<string, Row>();
 let skipped = 0;
+let sections = 0;
+// Établissements sans lycéens : écoles uniquement post-bac (BTS, prépas), collèges.
+const EXCLUDED_NATURES = /COMPOSEES UNIQT DE STS|^COLLEGE$/i;
 for (const r of rows) {
   const uai = col(r, "identifiant_de_l_etablissement").toUpperCase();
   const type = col(r, "type_etablissement");
@@ -49,6 +52,14 @@ for (const r of rows) {
   const closed = col(r, "date_fermeture");
   if (!/^\d{7}[A-Z]$/.test(uai) || !/lyc/i.test(type) || /ferm/i.test(etat) || closed) {
     skipped++;
+    continue;
+  }
+  // Une « section » rattachée administrativement à un lycée (SEP, SGT) est le même établissement pour les élèves :
+  // on la retire pour ne pas éparpiller les participations. Les annexes géographiques (autre site) sont gardées.
+  const nature = col(r, "libelle_nature");
+  const attachment = col(r, "type_rattachement_etablissement_mere");
+  if (/filiere|section/i.test(normalize(attachment)) || EXCLUDED_NATURES.test(nature)) {
+    sections++;
     continue;
   }
   const name = col(r, "nom_etablissement");
@@ -60,7 +71,8 @@ for (const r of rows) {
     yes(col(r, "voie_professionnelle")) && "professionnelle",
   ].filter(Boolean) as string[];
   let dept = col(r, "code_departement");
-  if (/^0\d\d$/.test(dept) && !dept.startsWith("09")) dept = dept.slice(1);
+  // « 075 » → « 75 », « 02A » → « 2A » ; l'outre-mer (971…988) reste sur 3 caractères.
+  if (/^0(\d\d|2[AB])$/i.test(dept)) dept = dept.slice(1).toUpperCase();
   out.set(uai, {
     uai,
     name,
@@ -88,7 +100,18 @@ async function main() {
         academy = excluded.academy, sector = excluded.sector, tracks = excluded.tracks,
         search = excluded.search, updated_at = now()`;
   }
-  console.log(`${list.length} lycées importés ou mis à jour, ${skipped} lignes ignorées (autres types, fermés ou invalides).`);
+  // Établissements absents du nouvel annuaire (fermés, fusionnés) : supprimés s'ils n'ont aucune participation, masqués sinon.
+  const uais = list.map((s) => s.uai);
+  const removed = await sql`
+    delete from schools where source = 'annuaire-education' and not (uai = any(${uais}))
+      and not exists (select 1 from participations p where p.school_uai = schools.uai)`;
+  const hidden = await sql`
+    update schools set hidden = true, updated_at = now()
+    where source = 'annuaire-education' and not (uai = any(${uais})) and not hidden`;
+  console.log(
+    `${list.length} lycées importés ou mis à jour ; ${sections} sections rattachées ou établissements sans lycéens écartés ; ` +
+      `${skipped} lignes ignorées (autres types, fermés ou invalides) ; ${removed.count} retirés, ${hidden.count} masqués car absents du fichier.`,
+  );
   await sql.end();
 }
 main().catch(async (e) => {

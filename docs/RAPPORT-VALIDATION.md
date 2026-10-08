@@ -37,9 +37,15 @@ Parcours couverts :
   en production, Vercel multiplie les instances.
 - Revue visuelle sur mobile et desktop : accueil, recherche, page lycée, participation, tableau, images de partage.
 
+## Données officielles (fichier fourni le 8 octobre 2026)
+
+- Export « Annuaire de l'éducation » filtré sur les lycées : 5 644 lignes, toutes « OUVERT ».
+- Import : **4 917 lycées** dans 106 départements et collectivités. Écartés : 689 « sections » rattachées
+  administrativement à un autre lycée (même établissement pour les élèves) et les écoles uniquement post-bac.
+- Recherche vérifiée sur de vrais noms : « victor hugo besancon », « henri 4 » (chiffres romains), « condorset »
+  (faute de frappe), « 75005 » (code postal), « louis-le-gr » (saisie en cours), « marseille thiers ».
+
 ## Non vérifié ici (bloqué par l'environnement)
 
-- Import du fichier officiel complet de l'Annuaire de l'Éducation : l'accès à data.education.gouv.fr est bloqué
-  depuis cet environnement. Le script est testé sur un fichier au même format.
 - Déploiement Vercel/Supabase : non accessible depuis cet environnement.
 - Aperçus réels dans WhatsApp / Instagram : nécessite une URL publique.

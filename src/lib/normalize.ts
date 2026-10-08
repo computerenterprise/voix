@@ -16,9 +16,15 @@ const STOP = new Set([
   "polyvalent", "agricole", "prive", "public", "et", "de", "du", "des", "la", "le", "les", "l", "d", "a", "au", "aux", "en", "st", "ste",
 ]);
 
+const ROMAN = ["", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", "xi", "xii", "xiii", "xiv", "xv", "xvi", "xvii", "xviii", "xix", "xx"];
+
 /** Découpe une requête en jetons significatifs (les mots génériques comme « lycée » sont ignorés). */
 export function queryTokens(q: string): string[] {
-  const all = normalize(q).split(" ").filter(Boolean);
+  // « Henri 4 » → « henri iv » : les noms de rois et papes s'écrivent en chiffres romains dans l'annuaire.
+  const all = normalize(q)
+    .split(" ")
+    .filter(Boolean)
+    .map((t) => (/^\d{1,2}$/.test(t) && Number(t) >= 1 && Number(t) <= 20 ? ROMAN[Number(t)] : t));
   const meaningful = all.filter((t) => !STOP.has(t));
   return (meaningful.length ? meaningful : all).slice(0, 6);
 }

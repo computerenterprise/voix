@@ -20,7 +20,7 @@ export type School = SchoolLite & { department_code: string; academy: string; hi
  * Recherche par nom, ville ou code postal.
  * 1) tous les jetons doivent apparaître (nom + ville normalisés) ; 2) à défaut, recherche approximative (fautes de frappe).
  */
-export async function searchSchools(q: string, limit = 8): Promise<{ results: SchoolLite[]; fuzzy: boolean }> {
+export async function searchSchools(q: string, limit = 10): Promise<{ results: SchoolLite[]; fuzzy: boolean }> {
   const raw = q.trim().slice(0, 80);
   if (raw.length < 2) return { results: [], fuzzy: false };
 
@@ -42,18 +42,19 @@ export async function searchSchools(q: string, limit = 8): Promise<{ results: Sc
   const tokens = queryTokens(raw);
   if (!tokens.length) return { results: [], fuzzy: false };
   const full = normalize(raw);
-  const patterns = tokens.map((t) => "%" + t + "%");
+  // Jetons courts (« iv », « vic ») : début de mot, sinon « iv » trouverait « privé ». Jetons longs : n'importe où.
+  const patterns = tokens.map((t) => (t.length <= 3 ? "% " + t + "%" : "%" + t + "%"));
 
   const strict = await sql<SchoolLite[]>`
     select uai, name, city, postal_code, sector, tracks, department_name from schools
-    where not hidden and search like all(${patterns}::text[])
+    where not hidden and (' ' || search || ' ') like all(${patterns}::text[])
     order by similarity(search, ${full}) desc, name limit ${limit}`;
   if (strict.length) return { results: strict, fuzzy: false };
 
   const fuzzy = await sql<SchoolLite[]>`
     select uai, name, city, postal_code, sector, tracks, department_name from schools
     where not hidden and word_similarity(${tokens.join(" ")}, search) >= 0.4
-    order by word_similarity(${tokens.join(" ")}, search) desc, name limit ${limit}`;
+    order by word_similarity(${tokens.join(" ")}, search) + similarity(${tokens.join(" ")}, search) desc, name limit ${limit}`;
   return { results: fuzzy, fuzzy: true };
 }
 
