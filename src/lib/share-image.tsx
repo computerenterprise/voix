@@ -17,6 +17,8 @@ function loadFonts() {
   return fonts;
 }
 
+import { LogoShapes, LOGO_WIDTH } from "@/components/Logo";
+
 const INK = "#1d1d1f";
 const PAPER = "#ffffff";
 const SIGNAL = "#0071e3";
@@ -24,19 +26,12 @@ const MUTED = "#6e6e73";
 const TRACK = "#e8e8ed";
 
 function LogoMark({ size }: { size: number }) {
+  // Même dessin que le logo du site (src/components/Logo.tsx) : hauteur des capitales = size * 0.72.
+  const h = size * 0.72 * (36 / 32);
   return (
-    <div style={{ display: "flex", alignItems: "center", fontFamily: "Inter", fontSize: size, fontWeight: 700, color: INK, letterSpacing: -1, lineHeight: 1 }}>
-      <span>V</span>
-      <div style={{ display: "flex", width: size * 0.82, height: size * 0.82, borderRadius: 999, background: SIGNAL, alignItems: "center", justifyContent: "center", margin: `0 ${size * 0.04}px` }}>
-        <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 24 24">
-          <g fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round">
-            <circle cx="12" cy="12" r="10.5" />
-            <path d="M12 1.5v21M12 12l-7.4 7.4M12 12l7.4 7.4" />
-          </g>
-        </svg>
-      </div>
-      <span>IX</span>
-    </div>
+    <svg width={(h * LOGO_WIDTH) / 36} height={h} viewBox={`0 0 ${LOGO_WIDTH} 36`}>
+      {LogoShapes({ ink: INK, accent: SIGNAL })}
+    </svg>
   );
 }
 
