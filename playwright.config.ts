@@ -17,7 +17,7 @@ export default defineConfig({
   },
   webServer: {
     command: `npx next start -p ${PORT}`,
-    url: `http://localhost:${PORT}/api/health`,
+    url: `http://localhost:${PORT}/robots.txt`,
     reuseExistingServer: true,
     env: {
       DATABASE_URL: process.env.E2E_DATABASE_URL ?? "postgres://voix@127.0.0.1:5432/voix_test",

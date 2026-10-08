@@ -1,0 +1,37 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: voix
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: voix_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U voix" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://voix@127.0.0.1:5432/voix_test
+      E2E_DATABASE_URL: postgres://voix@127.0.0.1:5432/voix_test
+      APP_SECRET: ci-secret-ci-secret-ci-secret-0123456789
+      CRON_SECRET: ci-cron-secret
+      NEXT_PUBLIC_SITE_URL: http://localhost:3100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run db:migrate
+      - run: npm run db:import -- tests/fixtures/annuaire-fictif.csv
+      - run: echo "ADMIN_PASSWORD_HASH=$(npx tsx scripts/hash-password.ts voix-admin-dev-password)" >> "$GITHUB_ENV"
+      - run: npx next build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
