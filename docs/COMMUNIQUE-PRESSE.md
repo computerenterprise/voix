@@ -2,14 +2,15 @@
 
 **[Ville], le [date]**
 
-## VOIX : les lycéens peuvent désormais dire, lycée par lycée, ce qui ne fonctionne pas
+## VOIX : lycéens et étudiants peuvent désormais dire, établissement par établissement, ce qui ne fonctionne pas
 
-**« Ton lycée. Ta voix. »** VOIX est une plateforme civique, gratuite et indépendante, qui permet aux lycéennes et
-lycéens de signaler anonymement les problèmes concrets de leur établissement : professeurs absents non remplacés,
-classes surchargées, bâtiments dégradés, équipements manquants, orientation, vie scolaire.
+**« Ton lycée, ta fac. Ta voix. »** VOIX est une plateforme civique, gratuite et indépendante, qui permet aux lycéens et
+aux étudiants de signaler anonymement les problèmes concrets de leur établissement : professeurs absents non
+remplacés, classes et amphis surchargés, bâtiments dégradés, équipements manquants, orientation, vie scolaire et
+étudiante.
 
-Chaque lycée de France dispose de sa page, construite à partir de l'annuaire officiel de l'Éducation nationale.
-Les élèves y retrouvent leur établissement en quelques secondes, soutiennent les préoccupations déjà exprimées ou
+Chaque lycée, université et école de l'enseignement supérieur dispose de sa page, construite à partir des listes
+officielles de l'Éducation nationale et de l'Enseignement supérieur. Chacun y retrouve leur établissement en quelques secondes, soutiennent les préoccupations déjà exprimées ou
 en ajoutent une, puis partagent la page à leur classe. Les résultats s'affichent en direct, sans chiffre inventé.
 
 ### Une plateforme pensée pour des mineurs

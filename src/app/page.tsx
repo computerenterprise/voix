@@ -15,9 +15,9 @@ export default async function Home() {
     <>
       <section className="mx-auto max-w-3xl px-4 pt-10 pb-10 text-center sm:pt-20">
         <Logo className="rise mx-auto h-14 w-auto sm:h-24" />
-        <p className="rise eyebrow mt-4 sm:mt-6">Ton lycée. Ta voix.</p>
+        <p className="rise eyebrow mt-4 sm:mt-6">Ton lycée, ta fac. Ta voix.</p>
         <h1 className="rise rise-2 font-display mt-3 text-[2.25rem] min-[400px]:text-[2.5rem] leading-[1.06] font-bold sm:text-[4.5rem] sm:leading-[1.04]">
-          Et si ton lycée pouvait enfin se faire entendre&nbsp;?
+          Et si ton lycée ou ta fac pouvait enfin se faire entendre&nbsp;?
         </h1>
         <p className="rise rise-3 mx-auto mt-5 max-w-xl text-[1.1875rem] leading-relaxed text-muted sm:text-[1.3125rem]">
           Signale ce qui ne fonctionne pas, découvre les priorités de ton établissement et fais entendre ta voix.
@@ -26,7 +26,7 @@ export default async function Home() {
           <SchoolSearch />
         </div>
         <div className="rise rise-4 mt-6 flex flex-col items-center gap-3">
-          <Link href="/recherche" className="btn btn-primary">Trouver mon lycée</Link>
+          <Link href="/recherche" className="btn btn-primary">Trouver mon établissement</Link>
           <span className="text-sm text-muted">Anonyme. Sans compte. 30 secondes.</span>
         </div>
       </section>

@@ -1,4 +1,4 @@
-# VOIX — « Ton lycée. Ta voix. »
+# VOIX — « Ton lycée, ta fac. Ta voix. »
 
 Plateforme civique indépendante : les lycéens signalent les problèmes de leur établissement, soutiennent les
 préoccupations des autres élèves et consultent des résultats agrégés.

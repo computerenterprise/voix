@@ -70,7 +70,7 @@ export async function renderShareImage(uaiRaw: string, format: "og" | "story") {
       <div style={{ width: W, height: H, display: "flex", flexDirection: "column", background: PAPER, padding: story ? 90 : 56, fontFamily: "Inter" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <LogoMark size={story ? 120 : 68} />
-          <span style={{ fontSize: story ? 34 : 22, fontWeight: 600, color: SIGNAL }}>Ton lycée. Ta voix.</span>
+          <span style={{ fontSize: story ? 34 : 22, fontWeight: 600, color: SIGNAL }}>{school.kind === "universite" ? "Ta fac. Ta voix." : school.kind === "ecole" ? "Ton école. Ta voix." : "Ton lycée. Ta voix."}</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", marginTop: story ? 140 : 26 }}>
           <span style={{ fontFamily: "Inter", fontWeight: 700, fontSize: nameSize, lineHeight: 1.05, color: INK, letterSpacing: -1.5 }}>{school.name}</span>

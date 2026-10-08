@@ -17,7 +17,7 @@ const inter = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: { default: "VOIX — Ton lycée. Ta voix.", template: "%s · VOIX" },
+  title: { default: "VOIX — Ton lycée, ta fac. Ta voix.", template: "%s · VOIX" },
   description:
     "Signale ce qui ne fonctionne pas dans ton lycée ou ton université, soutiens les préoccupations des autres et découvre les priorités de ton établissement. Plateforme indépendante.",
   openGraph: { siteName: "VOIX", locale: "fr_FR", type: "website" },

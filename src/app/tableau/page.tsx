@@ -36,7 +36,7 @@ export default async function Dashboard() {
       {d.total === 0 ? (
         <p className="card mt-6 p-6 text-ink-2">
           Aucune participation pour l&apos;instant. Les graphiques apparaîtront avec les premières participations réelles.{" "}
-          <Link href="/recherche" className="link">Trouver mon lycée</Link>
+          <Link href="/recherche" className="link">Trouver mon établissement</Link>
         </p>
       ) : (
         <div className="mt-6 grid gap-4 lg:grid-cols-5">
