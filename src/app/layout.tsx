@@ -38,14 +38,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Aller au contenu
         </a>
         <header className="sticky top-0 z-30 border-b border-black/5 bg-white/75 backdrop-blur-xl backdrop-saturate-150">
-          <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4">
-            <Link href="/" aria-label="VOIX, accueil" className="rounded-md">
-              <Logo className="h-[18px]" />
+          <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-4">
+            <Link href="/" aria-label="VOIX, accueil" className="shrink-0 rounded-md">
+              <Logo className="h-[26px] w-auto sm:h-[30px]" />
             </Link>
-            <nav aria-label="Navigation principale" className="flex items-center gap-0.5 text-[0.8125rem] text-ink-2">
-              <Link href="/tableau" className="rounded-full px-3 py-2 transition-colors hover:text-ink">Tableau</Link>
-              <Link href="/a-propos" className="rounded-full px-3 py-2 transition-colors hover:text-ink">À propos</Link>
-              <Link href="/recherche" className="ml-1 inline-flex h-8 items-center gap-1.5 rounded-full bg-signal px-3.5 font-medium text-white transition-colors hover:bg-[var(--signal-hover)]">
+            <nav aria-label="Navigation principale" className="flex items-center gap-0.5 whitespace-nowrap text-[0.8125rem] text-ink-2">
+              <Link href="/tableau" className="hidden min-[360px]:inline rounded-full px-1.5 py-2 transition-colors hover:text-ink min-[400px]:px-2 sm:px-3">Tableau</Link>
+              <Link href="/a-propos" className="rounded-full px-1.5 py-2 transition-colors hover:text-ink min-[400px]:px-2 sm:px-3">À propos</Link>
+              <Link href="/recherche" className="ml-1 inline-flex h-8 items-center gap-1.5 rounded-full bg-signal px-3 font-medium text-white sm:px-3.5 transition-colors hover:bg-[var(--signal-hover)]">
                 <svg aria-hidden width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
                 Mon lycée
               </Link>

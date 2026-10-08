@@ -68,7 +68,7 @@ export async function renderShareImage(uaiRaw: string, format: "og" | "story") {
     (
       <div style={{ width: W, height: H, display: "flex", flexDirection: "column", background: PAPER, padding: story ? 90 : 56, fontFamily: "Inter" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <LogoMark size={story ? 92 : 52} />
+          <LogoMark size={story ? 120 : 68} />
           <span style={{ fontSize: story ? 34 : 22, fontWeight: 600, color: SIGNAL }}>Ton lycée. Ta voix.</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", marginTop: story ? 140 : 26 }}>
