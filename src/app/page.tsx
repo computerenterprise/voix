@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getHomeStats } from "@/lib/schools";
 import { CATEGORIES } from "@/lib/categories";
 import { SchoolSearch } from "@/components/SchoolSearch";
+import { Logo } from "@/components/Logo";
 
 export const dynamic = "force-dynamic";
 
@@ -12,9 +13,10 @@ export default async function Home() {
 
   return (
     <>
-      <section className="mx-auto max-w-3xl px-4 pt-14 pb-10 text-center sm:pt-24">
-        <p className="rise eyebrow">Ton lycée. Ta voix.</p>
-        <h1 className="rise rise-2 font-display mt-3 text-[2.5rem] leading-[1.06] font-bold sm:text-[4.5rem] sm:leading-[1.04]">
+      <section className="mx-auto max-w-3xl px-4 pt-10 pb-10 text-center sm:pt-20">
+        <Logo className="rise mx-auto h-14 w-auto sm:h-24" />
+        <p className="rise eyebrow mt-4 sm:mt-6">Ton lycée. Ta voix.</p>
+        <h1 className="rise rise-2 font-display mt-3 text-[2.25rem] min-[400px]:text-[2.5rem] leading-[1.06] font-bold sm:text-[4.5rem] sm:leading-[1.04]">
           Et si ton lycée pouvait enfin se faire entendre&nbsp;?
         </h1>
         <p className="rise rise-3 mx-auto mt-5 max-w-xl text-[1.1875rem] leading-relaxed text-muted sm:text-[1.3125rem]">
