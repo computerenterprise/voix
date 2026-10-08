@@ -5,20 +5,13 @@ import { Logo } from "@/components/Logo";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const figtree = localFont({
+// Sur iPhone et Mac, la police système (SF Pro) est utilisée ; ailleurs, Inter, auto-hébergée.
+const inter = localFont({
   src: [
-    { path: "../fonts/figtree-latin-wght-normal.woff2", weight: "300 900", style: "normal" },
-    { path: "../fonts/figtree-latin-ext-wght-normal.woff2", weight: "300 900", style: "normal" },
+    { path: "../fonts/inter-latin-wght-normal.woff2", weight: "100 900", style: "normal" },
+    { path: "../fonts/inter-latin-ext-wght-normal.woff2", weight: "100 900", style: "normal" },
   ],
-  variable: "--font-figtree",
-  display: "swap",
-});
-const bricolage = localFont({
-  src: [
-    { path: "../fonts/bricolage-grotesque-latin-wght-normal.woff2", weight: "200 800", style: "normal" },
-    { path: "../fonts/bricolage-grotesque-latin-ext-wght-normal.woff2", weight: "200 800", style: "normal" },
-  ],
-  variable: "--font-bricolage",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -32,54 +25,49 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f2ec",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${figtree.variable} ${bricolage.variable} antialiased`}>
+    <html lang="fr" className={`${inter.variable} antialiased`}>
       <body className="min-h-dvh flex flex-col">
         <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 btn btn-dark btn-sm">
           Aller au contenu
         </a>
-        <header className="sticky top-0 z-30 border-b border-line/70 bg-paper/85 backdrop-blur-md">
-          <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
+        <header className="sticky top-0 z-30 border-b border-black/5 bg-white/75 backdrop-blur-xl backdrop-saturate-150">
+          <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4">
             <Link href="/" aria-label="VOIX, accueil" className="rounded-md">
-              <Logo className="h-6" />
+              <Logo className="h-[18px]" />
             </Link>
-            <nav aria-label="Navigation principale" className="flex items-center gap-1 text-[0.9375rem] font-semibold">
-              <Link href="/tableau" className="rounded-full px-3 py-2 hover:bg-paper-2">Tableau</Link>
-              <Link href="/a-propos" className="rounded-full px-3 py-2 hover:bg-paper-2">À propos</Link>
-              <Link href="/recherche" className="btn btn-dark btn-sm ml-1 !min-h-9 !px-3.5">
-                <span className="sr-only sm:not-sr-only">Mon lycée</span>
-                <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <nav aria-label="Navigation principale" className="flex items-center gap-0.5 text-[0.8125rem] text-ink-2">
+              <Link href="/tableau" className="rounded-full px-3 py-2 transition-colors hover:text-ink">Tableau</Link>
+              <Link href="/a-propos" className="rounded-full px-3 py-2 transition-colors hover:text-ink">À propos</Link>
+              <Link href="/recherche" className="ml-1 inline-flex h-8 items-center gap-1.5 rounded-full bg-signal px-3.5 font-medium text-white transition-colors hover:bg-[var(--signal-hover)]">
+                <svg aria-hidden width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                Mon lycée
               </Link>
             </nav>
           </div>
         </header>
         <main id="contenu" className="flex-1">{children}</main>
-        <footer className="mt-20 border-t border-line bg-paper-2/60">
-          <div className="mx-auto max-w-5xl px-4 py-10 text-sm text-muted">
-            <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
-              <div className="max-w-sm">
-                <Logo className="h-5" />
-                <p className="mt-3">
-                  Plateforme civique indépendante des partis, syndicats, établissements et administrations.
-                  Les participations ne sont pas un sondage représentatif.
-                </p>
-              </div>
-              <ul className="grid grid-cols-2 gap-x-8 gap-y-2 font-medium text-ink-2">
-                <li><Link className="hover:underline" href="/a-propos">À propos et méthode</Link></li>
-                <li><Link className="hover:underline" href="/charte">Charte de modération</Link></li>
-                <li><Link className="hover:underline" href="/confidentialite">Confidentialité</Link></li>
-                <li><Link className="hover:underline" href="/mentions-legales">Mentions légales</Link></li>
-                <li><Link className="hover:underline" href="/mes-donnees">Mes données</Link></li>
-                <li><Link className="hover:underline" href="/signaler">Signaler un contenu</Link></li>
-              </ul>
-            </div>
-            <p className="mt-8 text-xs">
+        <footer className="mt-24 bg-card">
+          <div className="mx-auto max-w-5xl px-4 py-10 text-xs text-muted">
+            <p className="max-w-xl leading-relaxed">
+              VOIX est une plateforme civique indépendante des partis, syndicats, établissements et administrations.
+              Les participations ne constituent pas un sondage représentatif des élèves.
+            </p>
+            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 border-t border-line pt-5 text-ink-2">
+              <li><Link className="hover:underline" href="/a-propos">À propos et méthode</Link></li>
+              <li><Link className="hover:underline" href="/charte">Charte de modération</Link></li>
+              <li><Link className="hover:underline" href="/confidentialite">Confidentialité</Link></li>
+              <li><Link className="hover:underline" href="/mentions-legales">Mentions légales</Link></li>
+              <li><Link className="hover:underline" href="/mes-donnees">Mes données</Link></li>
+              <li><Link className="hover:underline" href="/signaler">Signaler un contenu</Link></li>
+            </ul>
+            <p className="mt-5">
               Données des établissements : Annuaire de l&apos;Éducation, ministère de l&apos;Éducation nationale (Licence Ouverte).
             </p>
           </div>

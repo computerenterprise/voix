@@ -44,79 +44,80 @@ export default async function SchoolPage({ params, searchParams }: Props) {
   const max = Math.max(1, ...results.categories.map((c) => c.supports));
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-8">
+    <div className="mx-auto max-w-3xl px-4 pt-8 sm:pt-12">
       {merci && (
-        <div role="status" className="rise mb-6 rounded-3xl bg-ink p-6 text-paper">
-          <p className="font-display text-2xl font-extrabold">Merci, ta voix est comptée.</p>
-          <p className="mt-1 text-paper/80">
+        <div role="status" className="rise mb-8 rounded-[1.75rem] bg-black p-7 text-center text-white sm:p-10">
+          <div aria-hidden className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-signal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"/></svg>
+          </div>
+          <p className="font-display mt-4 text-3xl font-bold">Merci, ta voix est comptée.</p>
+          <p className="mx-auto mt-2 max-w-md leading-relaxed text-white/70">
             {ecrit ? "Ton message sera relu par l'équipe avant toute publication. " : ""}
             Plus vous êtes nombreux, plus les priorités de ton lycée sont lisibles. Partage la page à ta classe.
           </p>
-          <div className="mt-4 [&_.btn-ghost]:border-paper [&_.btn-ghost]:text-paper [&_.btn-ghost:hover]:bg-paper [&_.btn-ghost:hover]:text-ink [&_.btn-dark]:bg-signal [&_.btn-dark]:text-ink">
+          <div className="mt-6 flex justify-center [&_.btn-ghost]:bg-white/10 [&_.btn-ghost]:text-white [&_.btn-ghost:hover]:bg-white/20 [&_.btn-dark]:bg-signal [&_.btn-dark:hover]:bg-[var(--signal-hover)]">
             <ShareBox url={url} name={school.name} />
           </div>
         </div>
       )}
 
-      <p className="rise text-sm font-semibold text-muted">
-        {school.city}
-        {school.department_name && ` · ${school.department_name}`}
-        {school.sector && ` · ${school.sector}`}
-      </p>
-      <h1 className="rise rise-2 font-display mt-2 text-4xl leading-[1.02] font-extrabold sm:text-6xl">{school.name}</h1>
-      {school.tracks.length > 0 && <p className="mt-2 text-sm text-muted">Voie {school.tracks.join(", ")}</p>}
+      <div className="text-center">
+        <p className="rise text-sm text-muted">
+          {school.city}
+          {school.department_name && ` · ${school.department_name}`}
+          {school.sector && ` · ${school.sector}`}
+        </p>
+        <h1 className="rise rise-2 font-display mt-2 text-[2.25rem] leading-[1.08] font-bold sm:text-6xl">{school.name}</h1>
+        {school.tracks.length > 0 && <p className="mt-2 text-sm text-muted">Voie {school.tracks.join(", ")}</p>}
 
-      <div className="rise rise-3 mt-6 flex items-end justify-between gap-4 border-y border-line py-5">
-        <div>
-          <p data-testid="total" className="font-display text-5xl font-extrabold leading-none">{results.total.toLocaleString("fr-FR")}</p>
-          <p className="mt-1 text-sm text-muted">participation{results.total > 1 ? "s" : ""} comptabilisée{results.total > 1 ? "s" : ""}</p>
+        <div className="rise rise-3 mt-8">
+          <p data-testid="total" className="font-display text-6xl font-semibold tabular-nums leading-none">{results.total.toLocaleString("fr-FR")}</p>
+          <p className="mt-2 text-muted">participation{results.total > 1 ? "s" : ""} comptabilisée{results.total > 1 ? "s" : ""}</p>
+          <Link href={`/a-propos#limites`} className="link mt-1 inline-block text-sm">Non représentatif de tous les élèves</Link>
         </div>
-        <Link href={`/a-propos#limites`} className="chip max-w-[11rem] bg-paper-2 text-ink-2 text-right">Non représentatif de tous les élèves</Link>
+
+        <div className="mt-8 flex flex-col items-center gap-3">
+          <Link href={`/lycee/${uai}/participer`} className="btn btn-primary w-full max-w-xs">
+            {mine.length ? "Ajouter un signalement" : "Faire entendre mon lycée"}
+          </Link>
+          {!merci && <ShareBox url={url} name={school.name} compact />}
+        </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-        <Link href={`/lycee/${uai}/participer`} className="btn btn-primary w-full sm:w-auto">
-          {mine.length ? "Ajouter un signalement" : "Faire entendre mon lycée"}
-        </Link>
-        {!merci && <ShareBox url={url} name={school.name} compact />}
-      </div>
-
-      <section className="mt-10" aria-labelledby="prio">
-        <h2 id="prio" className="font-display text-3xl font-extrabold">Préoccupations signalées</h2>
+      <section className="mt-16" aria-labelledby="prio">
+        <h2 id="prio" className="font-display text-3xl font-bold">Préoccupations signalées.</h2>
         {results.total === 0 ? (
-          <p className="mt-3 text-ink-2">
+          <p className="mt-2 text-muted">
             Personne n&apos;a encore participé pour ce lycée. Sois la première voix : soutiens une préoccupation ci-dessous.
           </p>
         ) : !showPercent ? (
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-2 text-sm text-muted">
             Les pourcentages s&apos;affichent à partir de {MIN_FOR_PERCENT} participations. En attendant, voici le nombre de soutiens.
           </p>
         ) : (
-          <p className="mt-3 text-sm text-muted">Part des participations qui citent chaque préoccupation (plusieurs choix possibles).</p>
+          <p className="mt-2 text-sm text-muted">Part des participations qui citent chaque préoccupation (plusieurs choix possibles).</p>
         )}
 
-        <ul className="mt-5 grid gap-3">
+        <ul className="mt-6 grid gap-3">
           {results.categories.map((c, i) => (
-            <li key={c.key} className="card p-4 sm:p-5">
+            <li key={c.key} className="card p-5">
               <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-lg font-bold leading-tight">
-                    <span aria-hidden className="mr-1.5">{emoji(c.key)}</span>
-                    {categoryLabel(c.key)}
-                  </p>
-                  <p className="mt-1 text-sm text-muted">
-                    {c.supports} soutien{c.supports > 1 ? "s" : ""}
-                    {c.reports > 0 && ` · ${c.reports} signalement${c.reports > 1 ? "s" : ""} écrit${c.reports > 1 ? "s" : ""}`}
-                  </p>
+                <div className="flex min-w-0 items-start gap-3">
+                  <span aria-hidden className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-xl">{emoji(c.key)}</span>
+                  <div className="min-w-0">
+                    <p className="text-[1.0625rem] font-semibold leading-tight">{categoryLabel(c.key)}</p>
+                    <p className="mt-1 text-sm text-muted">
+                      {c.supports} soutien{c.supports > 1 ? "s" : ""}
+                      {c.reports > 0 && ` · ${c.reports} signalement${c.reports > 1 ? "s" : ""} écrit${c.reports > 1 ? "s" : ""}`}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-3">
-                  {showPercent && c.percent !== null && (
-                    <span className="font-display text-3xl font-extrabold tabular-nums">{c.percent}%</span>
-                  )}
-                </div>
+                {showPercent && c.percent !== null && (
+                  <span className="font-display shrink-0 text-3xl font-semibold tabular-nums">{c.percent}%</span>
+                )}
               </div>
               {results.total > 0 && (
-                <div className="mt-3 h-3 overflow-hidden rounded-full bg-paper-2" aria-hidden>
+                <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-paper-2" aria-hidden>
                   <div
                     className="bar-grow h-full rounded-full"
                     style={{
@@ -127,8 +128,8 @@ export default async function SchoolPage({ params, searchParams }: Props) {
                   />
                 </div>
               )}
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                <span className={`chip ${c.status ? "bg-ok-soft text-ok" : "bg-paper-2 text-muted"}`}>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+                <span className={`chip ${c.status ? "bg-ok-soft text-ok" : "bg-white text-muted"}`}>
                   {c.status ? CONCERN_STATUSES[c.status] : "Pas encore transmis"}
                 </span>
                 <SupportButton uai={uai} category={c.key} supported={mine.includes(c.key)} label={categoryLabel(c.key)} />
@@ -140,14 +141,14 @@ export default async function SchoolPage({ params, searchParams }: Props) {
       </section>
 
       {results.testimonies.length > 0 && (
-        <section className="mt-12" aria-labelledby="temo">
-          <h2 id="temo" className="font-display text-3xl font-extrabold">Témoignages relus</h2>
+        <section className="mt-16" aria-labelledby="temo">
+          <h2 id="temo" className="font-display text-3xl font-bold">Témoignages relus.</h2>
           <p className="mt-2 text-sm text-muted">Publiés après relecture par l&apos;équipe VOIX. Anonymes, sans nom de personne.</p>
-          <ul className="mt-4 grid gap-3">
+          <ul className="mt-6 grid gap-3">
             {results.testimonies.map((t, i) => (
-              <li key={i} className="card p-5">
-                <p className="chip bg-paper-2 text-ink-2">{categoryLabel(t.category)}</p>
-                <blockquote className="mt-3 text-lg leading-snug">« {t.body} »</blockquote>
+              <li key={i} className="card p-6">
+                <p className="text-sm font-medium text-signal">{categoryLabel(t.category)}</p>
+                <blockquote className="font-display mt-2 text-xl font-medium leading-snug">« {t.body} »</blockquote>
               </li>
             ))}
           </ul>
@@ -159,9 +160,9 @@ export default async function SchoolPage({ params, searchParams }: Props) {
         </p>
       )}
 
-      <section className="mt-12 rounded-3xl border border-line bg-paper-2/60 p-5 text-sm text-ink-2">
-        <h2 className="font-bold text-ink">Comment lire ces chiffres</h2>
-        <ul className="mt-2 list-disc space-y-1 pl-5">
+      <section className="mt-16 border-t border-line pt-6 text-sm text-muted">
+        <h2 className="font-semibold text-ink">Comment lire ces chiffres</h2>
+        <ul className="mt-2 list-disc space-y-1 pl-5 leading-relaxed">
           <li>Une participation correspond à un navigateur, pas à un élève vérifié. Ce n&apos;est pas un sondage représentatif.</li>
           <li>Les participations suspectes sont contrôlées et peuvent être retirées du décompte.</li>
           <li>L&apos;état de traitement est mis à jour par l&apos;équipe VOIX quand une démarche est faite auprès du lycée.</li>

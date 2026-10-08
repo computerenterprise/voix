@@ -6,7 +6,7 @@ export default async function Requests() {
     select id, details, contact, status, created_at from deletion_requests order by status = 'open' desc, created_at desc limit 100`;
   return (
     <div>
-      <h2 className="font-display text-2xl font-extrabold">Demandes de suppression</h2>
+      <h2 className="font-display text-2xl font-bold">Demandes de suppression</h2>
       <p className="mt-1 text-sm text-muted">
         Retrouver le contenu (Modération → Publiés, ou Lycées), le supprimer, puis marquer la demande comme traitée. Le contact est alors effacé. Délai légal : un mois maximum.
       </p>

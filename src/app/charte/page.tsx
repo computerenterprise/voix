@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Charte de modération" };
 export default function Charte() {
   return (
     <article className="prose-voix mx-auto max-w-2xl px-4 pt-10">
-      <h1 className="font-display text-4xl font-extrabold sm:text-6xl">Charte de modération</h1>
+      <h1 className="font-display text-4xl font-bold sm:text-6xl">Charte de modération</h1>
       <p className="text-xl">Sur VOIX, on décrit des problèmes, jamais des personnes.</p>
 
       <h2>Ce qui est publié</h2>

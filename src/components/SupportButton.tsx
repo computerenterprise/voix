@@ -42,10 +42,10 @@ export function SupportButton({ uai, category, supported, label }: { uai: string
         type="button"
         onClick={support}
         disabled={state === "sending"}
-        className="btn btn-ghost btn-sm"
+        className="btn btn-sm bg-white text-signal hover:bg-signal hover:text-white"
         aria-label={`Je soutiens : ${label}`}
       >
-        {state === "sending" ? "…" : "+ Je soutiens"}
+        {state === "sending" ? "…" : "Je soutiens"}
       </button>
       {state === "error" && <span className="text-xs text-signal-ink" role="alert">{msg}</span>}
     </div>

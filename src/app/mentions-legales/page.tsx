@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Mentions légales" };
 export default function Legal() {
   return (
     <article className="prose-voix mx-auto max-w-2xl px-4 pt-10">
-      <h1 className="font-display text-4xl font-extrabold sm:text-6xl">Mentions légales</h1>
+      <h1 className="font-display text-4xl font-bold sm:text-6xl">Mentions légales</h1>
       <h2>Éditeur</h2>
       <p>
         <Todo value={LEGAL.publisherName} label="nom de l'éditeur" />

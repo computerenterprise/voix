@@ -50,7 +50,7 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
   return (
     <form onSubmit={submit} className="mt-8" noValidate>
       <fieldset>
-        <legend className="text-sm font-bold uppercase tracking-wide text-muted">1 · Préoccupations</legend>
+        <legend className="text-sm font-medium text-muted">Préoccupations</legend>
         <div className="mt-3 grid gap-2">
           {CATEGORIES.map((c) => {
             const on = selected.includes(c.key);
@@ -58,13 +58,13 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
             return (
               <label
                 key={c.key}
-                className={`flex cursor-pointer items-center gap-3 rounded-2xl border-2 px-4 py-3.5 transition-colors ${on ? "border-ink bg-ink text-paper" : "border-line bg-card hover:border-ink"}`}
+                className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3.5 ring-2 transition-all ${on ? "bg-[#e8f2ff] ring-signal" : "bg-card ring-transparent hover:bg-paper-2"}`}
               >
                 <input type="checkbox" className="sr-only" checked={on} onChange={() => toggle(c.key)} />
                 <span aria-hidden className="text-xl">{c.emoji}</span>
-                <span className="flex-1 text-[1.0625rem] font-semibold">{c.label}</span>
+                <span className="flex-1 text-[1.0625rem] font-medium">{c.label}</span>
                 {was && !on && <span className="chip bg-ok-soft text-ok">déjà soutenu</span>}
-                <span aria-hidden className={`grid h-6 w-6 place-items-center rounded-full border-2 ${on ? "border-signal bg-signal text-ink" : "border-line"}`}>
+                <span aria-hidden className={`grid h-6 w-6 place-items-center rounded-full border-2 transition-colors ${on ? "border-signal bg-signal text-white" : "border-line bg-white"}`}>
                   {on && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"/></svg>}
                 </span>
               </label>
@@ -74,22 +74,22 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
       </fieldset>
 
       <div className="mt-8">
-        <p className="text-sm font-bold uppercase tracking-wide text-muted">2 · Un détail à ajouter&nbsp;? (facultatif)</p>
+        <p className="text-sm font-medium text-muted">Un détail à ajouter&nbsp;? Facultatif.</p>
         {!withText ? (
-          <button type="button" className="btn btn-ghost btn-sm mt-3" onClick={() => setWithText(true)}>
+          <button type="button" className="link mt-2 text-[1.0625rem] font-medium" onClick={() => setWithText(true)}>
             + Écrire un signalement
           </button>
         ) : (
-          <div className="mt-3 rounded-3xl border border-line bg-card p-4">
-            <div className="rounded-2xl bg-signal-soft p-3 text-sm text-signal-ink">
-              <p className="font-bold">Décris un problème, pas une personne.</p>
+          <div className="mt-3 rounded-2xl bg-card p-4">
+            <div className="rounded-xl bg-white p-3 text-sm text-ink-2">
+              <p className="font-semibold text-ink">Décris un problème, pas une personne.</p>
               <p className="mt-0.5">Pas de nom (élève, prof, personnel), pas de contact, pas d&apos;insulte. Ton message est relu avant toute publication et peut être refusé.</p>
             </div>
             {cats.length > 1 && (
               <label className="mt-3 block text-sm font-semibold">
                 Ton message concerne :
                 <select
-                  className="mt-1 block w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-base"
+                  className="mt-1 block w-full rounded-xl border border-line bg-white px-3 py-2.5 text-base"
                   value={reportCat}
                   onChange={(e) => setTextCat(e.target.value)}
                 >
@@ -107,7 +107,7 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Ex. : Les toilettes du bâtiment B sont fermées depuis la rentrée."
-              className="mt-1 block w-full resize-y rounded-xl border border-line bg-paper px-3 py-2.5 text-base outline-none focus:border-ink"
+              className="mt-1 block w-full resize-y rounded-xl border border-line bg-white px-3 py-2.5 text-base outline-none focus:border-signal focus:shadow-[0_0_0_4px_rgb(0_113_227/0.15)]"
             />
             <p className="mt-1 text-right text-xs text-muted">{body.length}/500</p>
           </div>
@@ -119,9 +119,9 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
         <label>Ne pas remplir<input tabIndex={-1} autoComplete="off" value={hp} onChange={(e) => setHp(e.target.value)} name="website" /></label>
       </div>
 
-      {error && <p role="alert" className="mt-6 rounded-2xl bg-signal-soft p-4 text-sm font-semibold text-signal-ink">{error}</p>}
+      {error && <p role="alert" className="mt-6 rounded-2xl bg-signal-soft p-4 text-sm font-medium text-signal-ink">{error}</p>}
 
-      <div className="sticky bottom-0 -mx-4 mt-8 border-t border-line bg-paper/95 px-4 py-4 backdrop-blur">
+      <div className="sticky bottom-0 -mx-4 mt-8 border-t border-black/5 bg-white/80 px-4 py-4 backdrop-blur-xl">
         <button type="submit" disabled={!canSend || sending} className="btn btn-primary w-full">
           {sending ? "Envoi…" : cats.length ? `Envoyer (${cats.length})` : "Choisis au moins une préoccupation"}
         </button>

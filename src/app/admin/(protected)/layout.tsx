@@ -34,7 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {links.map(([href, label, n]) => (
           <Link key={href} href={href} className="whitespace-nowrap rounded-full bg-card px-3.5 py-2 ring-1 ring-line hover:ring-ink">
             {label}
-            {n ? <span className="ml-1.5 rounded-full bg-signal px-1.5 text-ink">{n}</span> : null}
+            {n ? <span className="ml-1.5 rounded-full bg-signal px-1.5 text-white">{n}</span> : null}
           </Link>
         ))}
       </nav>

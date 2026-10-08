@@ -34,7 +34,7 @@ export default async function AdminStats() {
     <div className="grid gap-8">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-6">
         {tiles.map(([l, n]) => (
-          <div key={l} className="card p-4"><p className="font-display text-3xl font-extrabold">{n.toLocaleString("fr-FR")}</p><p className="text-xs text-muted">{l}</p></div>
+          <div key={l} className="card p-4"><p className="font-display text-3xl font-bold">{n.toLocaleString("fr-FR")}</p><p className="text-xs text-muted">{l}</p></div>
         ))}
       </div>
       <div className="grid gap-4 lg:grid-cols-2">

@@ -16,9 +16,9 @@ export default async function ParticipatePage({ params }: { params: Promise<{ ua
 
   return (
     <div className="mx-auto max-w-2xl px-4 pt-6">
-      <Link href={`/lycee/${uai}`} className="text-sm font-semibold text-muted hover:text-ink">← {school.name}</Link>
-      <h1 className="font-display mt-3 text-4xl font-extrabold leading-[1.02] sm:text-5xl">Qu&apos;est-ce qui coince dans ton lycée&nbsp;?</h1>
-      <p className="mt-3 text-ink-2">Choisis une ou plusieurs préoccupations. C&apos;est anonyme : on ne te demande ni nom, ni contact.</p>
+      <Link href={`/lycee/${uai}`} className="link text-sm">‹ {school.name}</Link>
+      <h1 className="font-display mt-4 text-[2.25rem] font-bold leading-[1.08] sm:text-5xl">Qu&apos;est-ce qui coince dans ton lycée&nbsp;?</h1>
+      <p className="mt-3 text-lg text-muted">Choisis une ou plusieurs préoccupations. C&apos;est anonyme : on ne te demande ni nom, ni contact.</p>
       <ParticipateForm uai={uai} already={mine} />
     </div>
   );

@@ -1,18 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #f5f2ec;
-  --paper-2: #ece7de;
-  --card: #fffdf9;
-  --ink: #0e0e10;
-  --ink-2: #2a2926;
-  --muted: #615d56;
-  --line: #ddd6ca;
-  --signal: #ff4a1c;
-  --signal-ink: #b52f0b;
-  --signal-soft: #ffe3d9;
-  --ok: #1f7a4d;
-  --ok-soft: #dcf2e5;
+  /* Palette inspirée d'Apple : blanc, gris très clairs, noir doux, un seul bleu d'action. */
+  --paper: #ffffff;
+  --paper-2: #e8e8ed;
+  --card: #f5f5f7;
+  --ink: #1d1d1f;
+  --ink-2: #424245;
+  --muted: #6e6e73;
+  --line: #d2d2d7;
+  --signal: #0071e3;
+  --signal-hover: #0077ed;
+  --signal-on-dark: #2997ff;
+  /* Alerte (erreurs, contenus à risque) */
+  --signal-ink: #c4161c;
+  --signal-soft: #fff1f0;
+  --ok: #1d7a3a;
+  --ok-soft: #e3f5e8;
   color-scheme: light;
 }
 
@@ -25,12 +29,13 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-signal: var(--signal);
+  --color-signal-on-dark: var(--signal-on-dark);
   --color-signal-ink: var(--signal-ink);
   --color-signal-soft: var(--signal-soft);
   --color-ok: var(--ok);
   --color-ok-soft: var(--ok-soft);
-  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-inter), "Helvetica Neue", Arial, sans-serif;
 }
 
 html {
@@ -42,56 +47,55 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--signal);
-  color: var(--ink);
+  background: #b3d7ff;
 }
 
 :focus-visible {
-  outline: 3px solid var(--ink);
+  outline: 3px solid rgb(0 113 227 / 0.6);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .font-display {
   font-family: var(--font-display);
-  font-variation-settings: "wdth" 100;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.028em;
 }
 
 @layer components {
-/* Boutons */
+/* Boutons : pilules, une seule couleur d'action */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 3.25rem;
-  padding: 0 1.4rem;
-  border-radius: 999px;
-  font-weight: 700;
+  gap: 0.45rem;
+  min-height: 2.875rem;
+  padding: 0 1.375rem;
+  border-radius: 980px;
+  font-weight: 500;
   font-size: 1.0625rem;
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: -0.016em;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   user-select: none;
   cursor: pointer;
 }
-.btn:active { transform: scale(0.97); }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-.btn-primary { background: var(--signal); color: var(--ink); box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.14); }
-.btn-primary:hover { background: #ff5f37; }
-.btn-dark { background: var(--ink); color: var(--paper); }
-.btn-dark:hover { background: #26252a; }
-.btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
-.btn-ghost:hover { background: var(--ink); color: var(--paper); }
-.btn-sm { min-height: 2.5rem; padding: 0 1rem; font-size: 0.9375rem; }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-primary { background: var(--signal); color: #fff; }
+.btn-primary:hover { background: var(--signal-hover); }
+.btn-dark { background: var(--ink); color: #fff; }
+.btn-dark:hover { background: #333336; }
+.btn-ghost { background: var(--card); color: var(--ink); }
+.btn-ghost:hover { background: var(--paper-2); }
+.btn-sm { min-height: 2.25rem; padding: 0 1rem; font-size: 0.9375rem; }
 
 .card {
   background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 1.5rem;
+  border-radius: 1.375rem;
 }
 
 .chip {
@@ -99,30 +103,32 @@ body {
   align-items: center;
   gap: 0.35rem;
   border-radius: 999px;
-  padding: 0.2rem 0.7rem;
+  padding: 0.2rem 0.65rem;
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.link { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
-.link:hover { color: var(--signal-ink); }
+.link { color: var(--signal); }
+.link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-.prose-voix h2 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; margin: 2.25rem 0 0.75rem; }
-.prose-voix h3 { font-weight: 700; font-size: 1.125rem; margin: 1.5rem 0 0.5rem; }
-.prose-voix p, .prose-voix li { color: var(--ink-2); line-height: 1.65; }
-.prose-voix p { margin: 0.75rem 0; }
+.eyebrow { color: var(--signal); font-weight: 600; font-size: 1.0625rem; letter-spacing: -0.01em; }
+
+.prose-voix h2 { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; letter-spacing: -0.025em; margin: 2.5rem 0 0.75rem; }
+.prose-voix h3 { font-weight: 600; font-size: 1.125rem; margin: 1.5rem 0 0.5rem; }
+.prose-voix p, .prose-voix li { color: var(--ink-2); line-height: 1.6; font-size: 1.0625rem; }
+.prose-voix p { margin: 0.85rem 0; }
 .prose-voix ul { list-style: disc; padding-left: 1.25rem; margin: 0.75rem 0; }
-.prose-voix li { margin: 0.35rem 0; }
-.prose-voix a { text-decoration: underline; text-underline-offset: 3px; }
+.prose-voix li { margin: 0.4rem 0; }
+.prose-voix a { color: var(--signal); }
+.prose-voix a:hover { text-decoration: underline; }
 .prose-voix table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; margin: 1rem 0; }
-.prose-voix th, .prose-voix td { border-bottom: 1px solid var(--line); padding: 0.5rem 0.25rem; text-align: left; vertical-align: top; }
-.todo { background: var(--signal-soft); color: var(--signal-ink); font-weight: 700; padding: 0 0.3rem; border-radius: 0.3rem; }
-
+.prose-voix th, .prose-voix td { border-bottom: 1px solid var(--line); padding: 0.6rem 0.25rem; text-align: left; vertical-align: top; }
+.todo { background: var(--signal-soft); color: var(--signal-ink); font-weight: 600; padding: 0 0.3rem; border-radius: 0.3rem; }
 }
 
 /* Animations discrètes */
-@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-.rise { animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 0.7s cubic-bezier(0.25, 0.1, 0.25, 1) both; }
 .rise-2 { animation-delay: 0.08s; }
 .rise-3 { animation-delay: 0.16s; }
 .rise-4 { animation-delay: 0.24s; }

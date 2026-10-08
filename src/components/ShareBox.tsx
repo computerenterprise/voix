@@ -29,9 +29,9 @@ export function ShareBox({ url, name, compact = false }: { url: string; name: st
   }
 
   return (
-    <div className={compact ? "flex flex-wrap gap-2" : "flex flex-col gap-2 sm:flex-row sm:flex-wrap"}>
-      <button type="button" onClick={nativeShare} className="btn btn-dark">
-        <svg aria-hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v13M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
+    <div className={compact ? "flex flex-wrap justify-center gap-2" : "flex w-full max-w-xs flex-col gap-2 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center"}>
+      <button type="button" onClick={nativeShare} className={`btn ${compact ? "btn-ghost btn-sm" : "btn-dark"}`}>
+        <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v13M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
         Partager la page
       </button>
       {!compact && (
@@ -44,7 +44,7 @@ export function ShareBox({ url, name, compact = false }: { url: string; name: st
           </a>
         </>
       )}
-      <button type="button" onClick={copy} className="btn btn-ghost" aria-live="polite">
+      <button type="button" onClick={copy} className={`btn btn-ghost ${compact ? "btn-sm" : ""}`} aria-live="polite">
         {copied ? "Lien copié ✓" : "Copier le lien"}
       </button>
     </div>

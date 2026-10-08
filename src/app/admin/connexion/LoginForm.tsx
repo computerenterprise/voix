@@ -10,7 +10,7 @@ export function LoginForm() {
       <label className="text-sm font-semibold">
         Mot de passe
         <input name="password" type="password" required autoComplete="current-password"
-          className="mt-1 block w-full rounded-xl border-2 border-ink bg-card px-3 py-3 text-base" />
+          className="mt-1 block w-full rounded-xl border border-line bg-white px-3 py-3 text-base" />
       </label>
       {state?.error && <p role="alert" className="text-sm font-semibold text-signal-ink">{state.error}</p>}
       <button className="btn btn-dark" disabled={pending}>{pending ? "…" : "Se connecter"}</button>

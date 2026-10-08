@@ -21,7 +21,7 @@ export default async function Suspicious() {
   return (
     <div className="grid gap-8">
       <section>
-        <h2 className="font-display text-2xl font-extrabold">Groupes par connexion (7 jours, ≥ 5)</h2>
+        <h2 className="font-display text-2xl font-bold">Groupes par connexion (7 jours, ≥ 5)</h2>
         <p className="mt-1 text-sm text-muted">Une même empreinte de connexion peut être un wifi de lycée partagé : vérifier le rythme avant de suspendre.</p>
         <div className="card mt-3 overflow-x-auto p-4">
           <table className="w-full text-sm">
@@ -43,7 +43,7 @@ export default async function Suspicious() {
         </div>
       </section>
       <section>
-        <h2 className="font-display text-2xl font-extrabold">Participations signalées ou suspendues</h2>
+        <h2 className="font-display text-2xl font-bold">Participations signalées ou suspendues</h2>
         <ul className="mt-3 grid gap-2">
           {rows.map((r) => (
             <li key={r.id} className="card flex flex-wrap items-center justify-between gap-3 p-4 text-sm">

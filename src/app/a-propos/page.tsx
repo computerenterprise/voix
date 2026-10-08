@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "À propos et méthode", description:
 export default function About() {
   return (
     <article className="prose-voix mx-auto max-w-2xl px-4 pt-10">
-      <h1 className="font-display text-4xl font-extrabold sm:text-6xl">À propos</h1>
+      <h1 className="font-display text-4xl font-bold sm:text-6xl">À propos</h1>
       <p className="text-xl">
         VOIX transforme des constats individuels de lycéens en informations agrégées, lisibles et utiles pour améliorer
         les conditions de scolarité.

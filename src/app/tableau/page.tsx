@@ -16,7 +16,7 @@ export default async function Dashboard() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-10">
-      <h1 className="font-display text-4xl font-extrabold sm:text-6xl">Tableau national</h1>
+      <h1 className="font-display text-4xl font-bold sm:text-6xl">Tableau national</h1>
       <p className="mt-3 max-w-2xl text-ink-2">
         Ce que signalent les lycéens, agrégé. Pas de classement des lycées : un lycée avec plus de participations
         n&apos;est pas « pire » qu&apos;un autre, il est simplement plus mobilisé sur VOIX.
@@ -24,11 +24,11 @@ export default async function Dashboard() {
 
       <div className="mt-8 grid grid-cols-2 gap-3">
         <div className="card p-5">
-          <p className="font-display text-4xl font-extrabold">{d.total.toLocaleString("fr-FR")}</p>
+          <p className="font-display text-4xl font-bold">{d.total.toLocaleString("fr-FR")}</p>
           <p className="text-sm text-muted">{d.total > 1 ? "participations comptabilisées" : "participation comptabilisée"}</p>
         </div>
         <div className="card p-5">
-          <p className="font-display text-4xl font-extrabold">{d.schools.toLocaleString("fr-FR")}</p>
+          <p className="font-display text-4xl font-bold">{d.schools.toLocaleString("fr-FR")}</p>
           <p className="text-sm text-muted">{d.schools > 1 ? "lycées avec au moins une participation" : "lycée avec au moins une participation"}</p>
         </div>
       </div>
@@ -41,12 +41,12 @@ export default async function Dashboard() {
       ) : (
         <div className="mt-6 grid gap-4 lg:grid-cols-5">
           <section className="card p-5 sm:p-6 lg:col-span-3" aria-labelledby="nat">
-            <h2 id="nat" className="font-display text-2xl font-extrabold">Préoccupations citées</h2>
+            <h2 id="nat" className="font-display text-2xl font-bold">Préoccupations citées</h2>
             <p className="mb-5 mt-1 text-sm text-muted">Part des participations qui citent chaque point (plusieurs choix possibles).</p>
             <HBarChart data={d.national.map((n) => ({ label: categoryLabel(n.key), value: n.supports, percent: n.percent }))} />
           </section>
           <section className="card p-5 sm:p-6 lg:col-span-2" aria-labelledby="day">
-            <h2 id="day" className="font-display text-2xl font-extrabold">Participations par jour</h2>
+            <h2 id="day" className="font-display text-2xl font-bold">Participations par jour</h2>
             <p className="mb-5 mt-1 text-sm text-muted">30 derniers jours.</p>
             <DailyChart data={d.daily} />
           </section>
@@ -54,7 +54,7 @@ export default async function Dashboard() {
       )}
 
       <section className="mt-10" aria-labelledby="dep">
-        <h2 id="dep" className="font-display text-3xl font-extrabold">Par département</h2>
+        <h2 id="dep" className="font-display text-3xl font-bold">Par département</h2>
         <p className="mt-1 text-sm text-muted">Affiché à partir de {MIN_FOR_DEPARTMENT} participations dans le département.</p>
         <div className="card mt-4 p-5">
           {d.departments.length ? (
@@ -69,7 +69,7 @@ export default async function Dashboard() {
       </section>
 
       <section className="mt-10" aria-labelledby="vil">
-        <h2 id="vil" className="font-display text-3xl font-extrabold">Par ville</h2>
+        <h2 id="vil" className="font-display text-3xl font-bold">Par ville</h2>
         <p className="mt-1 text-sm text-muted">Affiché à partir de {MIN_FOR_CITY} participations dans la ville.</p>
         <div className="card mt-4 p-5">
           {d.cities.length ? (

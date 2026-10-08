@@ -7,7 +7,7 @@ export default async function Errors() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl font-extrabold">Erreurs techniques</h2>
+        <h2 className="font-display text-2xl font-bold">Erreurs techniques</h2>
         <form action={clearErrors}><button className="btn btn-ghost btn-sm">Vider</button></form>
       </div>
       <p className="mt-1 text-sm text-muted">Sans IP ni identifiant. Supervision externe conseillée sur /api/health.</p>

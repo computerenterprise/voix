@@ -18,9 +18,9 @@ export default async function Schools({ searchParams }: { searchParams: Promise<
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <section>
-        <h2 className="font-display text-2xl font-extrabold">Lycées</h2>
+        <h2 className="font-display text-2xl font-bold">Lycées</h2>
         <form className="mt-3 flex gap-2">
-          <input name="q" defaultValue={q} placeholder="Nom, ville ou UAI" className="flex-1 rounded-full border-2 border-ink bg-card px-4 py-2" />
+          <input name="q" defaultValue={q} placeholder="Nom, ville ou UAI" className="flex-1 rounded-full border border-line bg-white px-4 py-2" />
           <button className="btn btn-dark btn-sm">Chercher</button>
         </form>
         <p className="mt-2 text-xs text-muted">Pour ajouter ou mettre à jour des lycées : réimporter l&apos;annuaire officiel (npm run db:import).</p>

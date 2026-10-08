@@ -10,7 +10,7 @@ export default async function Abuse() {
     select id, target_url, reason, details, status, created_at from abuse_reports order by status = 'open' desc, created_at desc limit 100`;
   return (
     <div>
-      <h2 className="font-display text-2xl font-extrabold">Signalements de contenus</h2>
+      <h2 className="font-display text-2xl font-bold">Signalements de contenus</h2>
       <p className="mt-1 text-sm text-muted">Contenu manifestement illicite : le retirer sans délai (Modération → Publiés → Retirer), puis clore.</p>
       <ul className="mt-4 grid gap-3">
         {rows.map((r) => (

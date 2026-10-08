@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Politique de confidentialité" };
 export default function Privacy() {
   return (
     <article className="prose-voix mx-auto max-w-2xl px-4 pt-10">
-      <h1 className="font-display text-4xl font-extrabold sm:text-6xl">Confidentialité</h1>
+      <h1 className="font-display text-4xl font-bold sm:text-6xl">Confidentialité</h1>
       <p className="text-xl">La version courte : on ne sait pas qui tu es, et on fait tout pour que ça reste comme ça.</p>
       <p className="text-sm text-muted">Dernière mise à jour : {LEGAL.lastUpdated}.</p>
 

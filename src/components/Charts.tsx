@@ -22,13 +22,13 @@ export function HBarChart({ data, unit = "participations" }: { data: Bar[]; unit
           aria-label={`${d.label} : ${d.percent} %, ${d.value} ${unit}`}
         >
           <div className="flex items-baseline justify-between gap-3 text-[0.9375rem]">
-            <span className="font-semibold">{d.label}</span>
-            <span className="tabular-nums font-bold">{d.percent}%</span>
+            <span className="font-medium">{d.label}</span>
+            <span className="tabular-nums font-semibold">{d.percent}%</span>
           </div>
-          <div className="mt-1.5 h-3 rounded-full bg-paper-2">
+          <div className="mt-1.5 h-2 rounded-full bg-paper-2">
             <div
               className="bar-grow h-full rounded-full transition-colors"
-              style={{ width: `${(d.percent / max) * 100}%`, background: hover === i ? "var(--signal)" : "var(--ink)", animationDelay: `${i * 50}ms` }}
+              style={{ width: `${(d.percent / max) * 100}%`, background: hover === i ? "#0058b0" : "var(--signal)", animationDelay: `${i * 50}ms` }}
             />
           </div>
           {hover === i && (
@@ -70,7 +70,7 @@ export function DailyChart({ data }: { data: { day: string; n: number }[] }) {
           >
             <div
               className="w-full rounded-t-[4px]"
-              style={{ height: `${Math.max((d.n / max) * 100, d.n ? 3 : 1)}%`, background: hover === i ? "var(--signal)" : d.n ? "var(--ink)" : "var(--line)" }}
+              style={{ height: `${Math.max((d.n / max) * 100, d.n ? 3 : 1)}%`, background: hover === i ? "#0058b0" : d.n ? "var(--signal)" : "var(--paper-2)" }}
             />
             {hover === i && (
               <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1 text-xs font-semibold text-paper">
@@ -103,7 +103,7 @@ export function AreaExplorer({ areas, kind }: { areas: Area[]; kind: "départeme
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={`Filtrer par ${kind}…`}
-          className="w-full rounded-full border-2 border-ink bg-card px-4 py-2.5 outline-none focus:border-signal"
+          className="w-full rounded-xl bg-card px-4 py-2.5 outline-none ring-1 ring-transparent focus:bg-white focus:ring-signal"
         />
       </label>
       <div className="mt-4 overflow-x-auto">
