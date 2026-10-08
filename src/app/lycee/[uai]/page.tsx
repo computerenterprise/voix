@@ -52,7 +52,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
             {ecrit ? "Ton message sera relu par l'équipe avant toute publication. " : ""}
             Plus vous êtes nombreux, plus les priorités de ton lycée sont lisibles. Partage la page à ta classe.
           </p>
-          <div className="mt-4 [&_.btn-ghost]:border-paper [&_.btn-ghost]:text-paper [&_.btn-dark]:bg-signal [&_.btn-dark]:text-ink">
+          <div className="mt-4 [&_.btn-ghost]:border-paper [&_.btn-ghost]:text-paper [&_.btn-ghost:hover]:bg-paper [&_.btn-ghost:hover]:text-ink [&_.btn-dark]:bg-signal [&_.btn-dark]:text-ink">
             <ShareBox url={url} name={school.name} />
           </div>
         </div>
