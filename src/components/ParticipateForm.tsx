@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/categories";
+import { consumeProof, prepareProof } from "@/lib/pow-client";
 
 export function ParticipateForm({ uai, already }: { uai: string; already: string[] }) {
   const router = useRouter();
@@ -16,6 +17,11 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
+  // La vérification anti-robot se calcule en arrière-plan pendant que l'élève choisit.
+  useEffect(() => {
+    prepareProof(uai).catch(() => {});
+  }, [uai]);
+
   const toggle = (k: string) => setSelected((s) => (s.includes(k) ? s.filter((x) => x !== k) : [...s, k]));
   const cats = [...new Set([...selected])];
   const reportCat = textCat || cats[0] || "";
@@ -27,6 +33,8 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
     setSending(true);
     setError("");
     try {
+      const pow = await prepareProof(uai);
+      consumeProof(uai);
       const res = await fetch("/api/participations", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -36,11 +44,12 @@ export function ParticipateForm({ uai, already }: { uai: string; already: string
           report: withText && body.trim() ? { category: reportCat, body: body.trim() } : null,
           hp,
           elapsed: Date.now() - startedAt.current,
+          pow,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erreur");
-      router.push(`/lycee/${uai}?merci=1${data.reportPending ? "&ecrit=1" : ""}`);
+      router.push(`/lycee/${uai}?merci=1${data.reportPending ? "&ecrit=1" : ""}${data.verifying ? "&verif=1" : ""}`);
     } catch (err) {
       setError((err as Error).message || "Erreur réseau. Réessaie.");
       setSending(false);

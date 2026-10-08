@@ -7,6 +7,7 @@ export default async function AdminStats() {
       select
         (select count(*)::int from participations where status = 'counted') as counted,
         (select count(*)::int from participations where status = 'suspended') as suspended,
+        (select count(*)::int from participations where status = 'pending') as verifying,
         (select count(*)::int from participations where status = 'removed') as removed,
         (select count(*)::int from participations where created_at > now() - interval '24 hours') as last24,
         (select count(*)::int from participations where created_at > now() - interval '1 hour') as last1h,
@@ -25,7 +26,7 @@ export default async function AdminStats() {
     sql<{ at: Date; action: string; target: string | null; detail: string | null }[]>`select at, action, target, detail from admin_audit order by at desc limit 15`,
   ]);
   const tiles: [string, number][] = [
-    ["Participations comptées", s.counted], ["Suspendues", s.suspended], ["Retirées", s.removed],
+    ["Participations comptées", s.counted], ["En vérification", s.verifying], ["Suspendues", s.suspended], ["Retirées", s.removed],
     ["Dernières 24 h", s.last24], ["Dernière heure", s.last1h], ["Lycées actifs", s.schools],
     ["Messages en attente", s.pending], ["Messages publiés", s.approved], ["Messages refusés", s.rejected],
     ["Lycées référencés", s.total_schools], ["Erreurs (24 h)", s.errors24],

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { db, ADMIN_PASSWORD, SCHOOL } from "./helpers";
+import { db, ADMIN_PASSWORD, SCHOOL, proof } from "./helpers";
 
 async function participate(page: Page, labels: string[], text?: string) {
   await page.goto(`/lycee/${SCHOOL}/participer`);
@@ -84,7 +84,7 @@ test("soutien en un geste depuis un autre navigateur", async ({ browser }) => {
 test("robot (champ piège) : suspendu et non compté", async ({ request, baseURL }) => {
   const res = await request.post("/api/participations", {
     headers: { origin: baseURL! },
-    data: { uai: SCHOOL, categories: ["autre"], hp: "http://spam", elapsed: 50 },
+    data: { uai: SCHOOL, categories: ["autre"], hp: "http://spam", elapsed: 50, pow: await proof(request, SCHOOL) },
   });
   expect(res.ok()).toBeTruthy();
   const sql = db();
@@ -94,11 +94,37 @@ test("robot (champ piège) : suspendu et non compté", async ({ request, baseURL
   expect(r.flags).toContain("trop_rapide");
 });
 
+test("triche : nouveaux navigateurs en série depuis la même connexion mis en vérification", async ({ browser }) => {
+  // 3 navigateurs ont déjà participé depuis cette connexion : le 4e n'est pas compté tout de suite.
+  const ctx = await browser.newContext({ locale: "fr-FR" });
+  const page = await ctx.newPage();
+  await page.goto(`/lycee/${SCHOOL}`);
+  await page.waitForTimeout(1600);
+  await page.getByRole("button", { name: "Je soutiens : Orientation et Parcoursup" }).click();
+  await expect(page).toHaveURL(/verif=1/);
+  await expect(page.getByText("Merci, ta voix est enregistrée.")).toBeVisible();
+  await expect(page.getByTestId("total")).toHaveText("2");
+  await expect(page.getByText("+ 1 en cours de vérification")).toBeVisible();
+  await ctx.close();
+});
+
+test("anti-robot : preuve de travail obligatoire, non rejouable, liée au lycée", async ({ request, baseURL }) => {
+  const headers = { origin: baseURL! };
+  const base = { uai: SCHOOL, categories: ["autre"], elapsed: 5000 };
+  expect((await request.post("/api/participations", { headers, data: base })).status()).toBe(400);
+  const p = await proof(request, SCHOOL);
+  expect((await request.post("/api/participations", { headers, data: { ...base, pow: { ...p, n: "0" } } })).status()).toBe(400);
+  const other = await proof(request, "9990003C");
+  expect((await request.post("/api/participations", { headers, data: { ...base, pow: other } })).status()).toBe(400);
+  expect((await request.post("/api/participations", { headers, data: { ...base, pow: p } })).status()).toBe(200);
+  expect((await request.post("/api/participations", { headers, data: { ...base, pow: p } })).status()).toBe(400);
+});
+
 test("sécurité API : origine étrangère refusée, entrée invalide rejetée, lycée inconnu", async ({ request, baseURL }) => {
   expect((await request.post("/api/participations", { headers: { origin: "https://evil.example" }, data: { uai: SCHOOL, categories: ["autre"] } })).status()).toBe(403);
   expect((await request.post("/api/participations", { headers: { origin: baseURL! }, data: { uai: "'; drop table schools; --", categories: ["autre"] } })).status()).toBe(400);
   expect((await request.post("/api/participations", { headers: { origin: baseURL! }, data: { uai: SCHOOL, categories: ["inexistante"] } })).status()).toBe(400);
-  expect((await request.post("/api/participations", { headers: { origin: baseURL! }, data: { uai: "0000000Z", categories: ["autre"] } })).status()).toBe(404);
+  expect((await request.post("/api/participations", { headers: { origin: baseURL! }, data: { uai: "0000000Z", categories: ["autre"], pow: await proof(request, "0000000Z") } })).status()).toBe(404);
   const s = await request.get("/api/schools/search?q=%27%20or%201%3D1%20--");
   expect(s.ok()).toBeTruthy();
 });
@@ -126,6 +152,12 @@ test("administration protégée et modération", async ({ page, request }) => {
   // Participation suspecte suspendue visible et actionnable
   await page.goto("/admin/participations");
   await expect(page.getByText("Champ piège rempli (robot)")).toBeVisible();
+  await expect(page.getByText(/Plusieurs navigateurs sur la même connexion/).first()).toBeVisible();
+  // Après contrôle, l'équipe valide le groupe : les voix en vérification sont comptées.
+  await page.getByRole("button", { name: "Valider le groupe" }).click();
+  await page.waitForLoadState("networkidle");
+  await page.goto(`/lycee/${SCHOOL}?merci=1`);
+  await expect(page.getByTestId("total")).toHaveText("4");
 
   // État de traitement
   await page.goto(`/admin/lycees?q=fictif&uai=${SCHOOL}`);

@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const [c] = await sql<{ reports: number; flagged: number; requests: number; abuse: number }[]>`
     select
       (select count(*)::int from reports where status = 'pending') as reports,
-      (select count(*)::int from participations where status = 'suspended' or (cardinality(flags) > 0 and status = 'counted')) as flagged,
+      (select count(*)::int from participations where status in ('suspended','pending') or (cardinality(flags) > 0 and status = 'counted')) as flagged,
       (select count(*)::int from deletion_requests where status = 'open') as requests,
       (select count(*)::int from abuse_reports where status = 'open') as abuse`;
   const links: [string, string, number?][] = [

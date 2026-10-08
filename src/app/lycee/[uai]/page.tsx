@@ -10,7 +10,7 @@ import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ uai: string }>; searchParams: Promise<{ merci?: string; ecrit?: string }> };
+type Props = { params: Promise<{ uai: string }>; searchParams: Promise<{ merci?: string; ecrit?: string; verif?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { uai } = await params;
@@ -33,7 +33,7 @@ const emoji = (k: string) => CATEGORIES.find((c) => c.key === k)?.emoji ?? "";
 export default async function SchoolPage({ params, searchParams }: Props) {
   const { uai: raw } = await params;
   const uai = raw.toUpperCase();
-  const { merci, ecrit } = await searchParams;
+  const { merci, ecrit, verif } = await searchParams;
   const school = await getSchool(uai);
   if (!school || school.hidden) notFound();
 
@@ -50,8 +50,9 @@ export default async function SchoolPage({ params, searchParams }: Props) {
           <div aria-hidden className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-signal">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"/></svg>
           </div>
-          <p className="font-display mt-4 text-3xl font-bold">Merci, ta voix est comptée.</p>
+          <p className="font-display mt-4 text-3xl font-bold">{verif ? "Merci, ta voix est enregistrée." : "Merci, ta voix est comptée."}</p>
           <p className="mx-auto mt-2 max-w-md leading-relaxed text-white/70">
+            {verif ? "Beaucoup de participations arrivent de la même connexion pour ce lycée : la tienne sera comptée après une vérification anti-triche. " : ""}
             {ecrit ? "Ton message sera relu par l'équipe avant toute publication. " : ""}
             Plus vous êtes nombreux, plus les priorités de ton lycée sont lisibles. Partage la page à ta classe.
           </p>
@@ -73,6 +74,9 @@ export default async function SchoolPage({ params, searchParams }: Props) {
         <div className="rise rise-3 mt-8">
           <p data-testid="total" className="font-display text-6xl font-semibold tabular-nums leading-none">{results.total.toLocaleString("fr-FR")}</p>
           <p className="mt-2 text-muted">participation{results.total > 1 ? "s" : ""} comptabilisée{results.total > 1 ? "s" : ""}</p>
+          {results.verifying > 0 && (
+            <p className="mt-1 text-sm text-muted">+ {results.verifying.toLocaleString("fr-FR")} en cours de vérification</p>
+          )}
           <Link href={`/a-propos#limites`} className="link mt-1 inline-block text-sm">Non représentatif de tous les élèves</Link>
         </div>
 
@@ -164,6 +168,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
         <h2 className="font-semibold text-ink">Comment lire ces chiffres</h2>
         <ul className="mt-2 list-disc space-y-1 pl-5 leading-relaxed">
           <li>Une participation correspond à un navigateur, pas à un élève vérifié. Ce n&apos;est pas un sondage représentatif.</li>
+          <li>Anti-triche : un navigateur ne compte qu&apos;une fois par lycée, chaque envoi passe une vérification anti-robot, et quand beaucoup de navigateurs votent depuis la même connexion, les voix supplémentaires attendent une vérification avant d&apos;être comptées.</li>
           <li>Les participations suspectes sont contrôlées et peuvent être retirées du décompte.</li>
           <li>L&apos;état de traitement est mis à jour par l&apos;équipe VOIX quand une démarche est faite auprès du lycée.</li>
         </ul>

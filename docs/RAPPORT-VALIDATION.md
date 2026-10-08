@@ -49,3 +49,10 @@ Parcours couverts :
 
 - Déploiement Vercel/Supabase : non accessible depuis cet environnement.
 - Aperçus réels dans WhatsApp / Instagram : nécessite une URL publique.
+
+## Anti-triche des votes (2026-10-08)
+
+- Vérification anti-robot invisible (preuve de travail SHA-256, 16 bits, ~1 s sur téléphone) : défi signé, lié au lycée, valable 15 min, à usage unique. Aucun service tiers, aucun cookie supplémentaire. Réglable par `POW_BITS`.
+- Au-delà de 3 navigateurs différents depuis la même connexion, le même jour, pour le même lycée : les nouvelles participations passent « en vérification » et ne sont pas comptées. La page du lycée affiche « + N en cours de vérification ». L'admin peut valider ou suspendre le groupe.
+- Limites connues : changer de connexion (wifi ↔ 4G) permet quelques voix de plus. Sans identification des élèves, la triche est limitée, pas impossible.
+- Tests : 14/14 e2e (dont « triche : nouveaux navigateurs en série » et « anti-robot : preuve de travail obligatoire, non rejouable, liée au lycée »), 5/5 unitaires.

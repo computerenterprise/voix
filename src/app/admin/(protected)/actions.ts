@@ -31,7 +31,7 @@ export async function deleteReport(form: FormData) {
 export async function setParticipationStatus(form: FormData) {
   await guard();
   const pid = id(form);
-  const status = z.enum(["counted", "suspended", "removed"]).parse(form.get("status"));
+  const status = z.enum(["counted", "pending", "suspended", "removed"]).parse(form.get("status"));
   await sql`update participations set status = ${status}, flags = case when ${status} = 'counted' then '{}'::text[] else flags end, updated_at = now() where id = ${pid}`;
   await audit(`participation_${status}`, `participation:${pid}`);
   revalidatePath("/admin", "layout");
@@ -42,8 +42,18 @@ export async function suspendIpGroup(form: FormData) {
   await guard();
   const ip = z.string().min(8).max(64).parse(form.get("ip"));
   const uai = z.string().regex(/^\d{7}[A-Z]$/).parse(form.get("uai"));
-  const r = await sql`update participations set status = 'suspended', updated_at = now() where ip_hash = ${ip} and school_uai = ${uai} and status = 'counted'`;
+  const r = await sql`update participations set status = 'suspended', updated_at = now() where ip_hash = ${ip} and school_uai = ${uai} and status in ('counted','pending')`;
   await audit("ip_group_suspended", `school:${uai}`, `${r.count} participations`);
+  revalidatePath("/admin", "layout");
+}
+
+/** Valide d'un coup les participations « en vérification » d'une même connexion (ex. wifi du lycée, après contrôle). */
+export async function validateIpGroup(form: FormData) {
+  await guard();
+  const ip = z.string().min(8).max(64).parse(form.get("ip"));
+  const uai = z.string().regex(/^\d{7}[A-Z]$/).parse(form.get("uai"));
+  const r = await sql`update participations set status = 'counted', updated_at = now() where ip_hash = ${ip} and school_uai = ${uai} and status = 'pending'`;
+  await audit("ip_group_validated", `school:${uai}`, `${r.count} participations`);
   revalidatePath("/admin", "layout");
 }
 

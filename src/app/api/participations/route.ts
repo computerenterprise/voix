@@ -4,6 +4,7 @@ import { rateLimit } from "@/lib/ratelimit";
 import { clientIp, json, sameOrigin } from "@/lib/request";
 import { ipHash } from "@/lib/security";
 import { logError } from "@/lib/log";
+import { verifyPow } from "@/lib/pow";
 
 export const dynamic = "force-dynamic";
 
@@ -28,10 +29,14 @@ export async function POST(req: Request) {
     if (parsed.data.report && !(await rateLimit(`report:${ip}`, 6, 3600))) {
       return json({ error: "Trop de messages envoyés depuis cette connexion. Réessaie dans une heure." }, 429);
     }
+    // Preuve de travail obligatoire : bloque les envois automatisés en masse.
+    if (await verifyPow(parsed.data.pow, parsed.data.uai)) {
+      return json({ error: "La vérification anti-robot a échoué. Recharge la page et réessaie." }, 400);
+    }
     const device = await getDevice(true);
     const res = await submitParticipation(parsed.data, { deviceHash: device!.hash, ipHash: ip, newDevice: device!.isNew });
     if (!res.ok) return json({ error: res.error }, res.status);
-    return json({ ok: true, reportPending: res.reportPending });
+    return json({ ok: true, reportPending: res.reportPending, verifying: res.status === "pending" });
   } catch (e) {
     await logError("api/participations", e);
     return json({ error: "Une erreur est survenue. Ta participation n'a pas été enregistrée, réessaie." }, 500);

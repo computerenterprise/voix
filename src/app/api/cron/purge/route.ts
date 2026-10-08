@@ -16,6 +16,7 @@ export async function GET(req: Request) {
       const parts = await tx`delete from participations where created_at < now() - interval '12 months'`;
       const rejected = await tx`delete from reports where status = 'rejected' and moderated_at < now() - interval '30 days'`;
       const rl = await tx`delete from rate_limits where window_start < now() - interval '48 hours'`;
+      await tx`delete from pow_used where used_at < now() - interval '1 day'`;
       const logs = await tx`delete from error_logs where at < now() - interval '90 days'`;
       const dr = await tx`delete from deletion_requests where created_at < now() - interval '12 months'`;
       const drc = await tx`update deletion_requests set contact = null where status <> 'open' and contact is not null`;

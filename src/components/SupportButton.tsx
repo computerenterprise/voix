@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { consumeProof, prepareProof } from "@/lib/pow-client";
 
 export function SupportButton({ uai, category, supported, label }: { uai: string; category: string; supported: boolean; label: string }) {
   const router = useRouter();
@@ -12,16 +13,18 @@ export function SupportButton({ uai, category, supported, label }: { uai: string
   async function support() {
     setState("sending");
     try {
+      const pow = await prepareProof(uai);
+      consumeProof(uai);
       const res = await fetch("/api/participations", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ uai, categories: [category], elapsed: Date.now() - loadedAt.current }),
+        body: JSON.stringify({ uai, categories: [category], elapsed: Date.now() - loadedAt.current, pow }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setState("done");
       // Affiche les résultats frais et l'invitation à partager.
-      router.replace(`/lycee/${uai}?merci=1`, { scroll: true });
+      router.replace(`/lycee/${uai}?merci=1${data.verifying ? "&verif=1" : ""}`, { scroll: true });
     } catch (e) {
       setMsg((e as Error).message || "Erreur réseau");
       setState("error");
@@ -41,6 +44,8 @@ export function SupportButton({ uai, category, supported, label }: { uai: string
       <button
         type="button"
         onClick={support}
+        onPointerEnter={() => prepareProof(uai).catch(() => {})}
+        onFocus={() => prepareProof(uai).catch(() => {})}
         disabled={state === "sending"}
         className="btn btn-sm bg-white text-signal hover:bg-signal hover:text-white"
         aria-label={`Je soutiens : ${label}`}

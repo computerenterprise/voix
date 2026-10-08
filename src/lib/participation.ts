@@ -16,11 +16,18 @@ export const ParticipationInput = z.object({
     .nullable(),
   hp: z.string().max(200).optional(),        // champ piège invisible
   elapsed: z.number().int().min(0).max(86_400_000).optional(), // ms passées sur le formulaire
+  pow: z.object({ c: z.string().max(200), n: z.string().regex(/^\d{1,12}$/) }).optional(), // preuve de travail
 });
 export type ParticipationInput = z.infer<typeof ParticipationInput>;
 
 /** Seuils anti-abus par lycée et par empreinte d'IP du jour (une IP peut être partagée : wifi du lycée, opérateur mobile). */
 export const IP_FLAG_THRESHOLD = 10;
+/**
+ * Au-delà de ce nombre de navigateurs différents depuis la même connexion (même jour, même lycée), les nouvelles
+ * participations sont enregistrées « en vérification » et ne sont pas comptées tant que l'équipe ne les a pas validées.
+ * C'est la parade au vote répété en navigation privée ou en effaçant ses cookies.
+ */
+export const IP_VERIFY_THRESHOLD = 3;
 export const IP_SUSPEND_THRESHOLD = 40;
 export const MAX_REPORTS_PER_DEVICE_SCHOOL = 3;
 
@@ -56,13 +63,22 @@ export async function submitParticipation(
   }
   if (input.elapsed !== undefined && input.elapsed < 1500) flags.push("trop_rapide");
 
-  const [{ n: sameIp }] = await sql<{ n: number }[]>`
+  // Un navigateur qui a déjà participé ne fait que compléter sa participation : pas de nouveau contrôle de connexion.
+  const [existing] = await sql<{ id: number }[]>`
+    select id from participations where school_uai = ${input.uai} and device_hash = ${ctx.deviceHash}`;
+  const [{ n: sameIp }] = existing
+    ? [{ n: 0 }]
+    : await sql<{ n: number }[]>`
     select count(*)::int as n from participations
     where ip_hash = ${ctx.ipHash} and school_uai = ${input.uai} and created_at > now() - interval '24 hours'`;
+  let verify = false;
   if (sameIp >= IP_SUSPEND_THRESHOLD) {
     flags.push("rafale_ip");
     suspend = true;
-  } else if (sameIp >= IP_FLAG_THRESHOLD) flags.push("ip_partagee");
+  } else if (sameIp >= IP_VERIFY_THRESHOLD) {
+    flags.push(sameIp >= IP_FLAG_THRESHOLD ? "ip_partagee" : "connexion_multiple");
+    verify = true;
+  }
 
   const [{ n: recent }] = await sql<{ n: number }[]>`
     select count(*)::int as n from participations where school_uai = ${input.uai} and created_at > now() - interval '10 minutes'`;
@@ -71,11 +87,11 @@ export async function submitParticipation(
   return sql.begin(async (tx) => {
     const [p] = await tx<{ id: number; status: string }[]>`
       insert into participations (school_uai, device_hash, ip_hash, categories, status, flags)
-      values (${input.uai}, ${ctx.deviceHash}, ${ctx.ipHash}, ${input.categories}, ${suspend ? "suspended" : "counted"}, ${flags})
+      values (${input.uai}, ${ctx.deviceHash}, ${ctx.ipHash}, ${input.categories}, ${suspend ? "suspended" : verify ? "pending" : "counted"}, ${flags})
       on conflict (school_uai, device_hash) do update set
         categories = (select array_agg(distinct c order by c) from unnest(participations.categories || excluded.categories) c),
         flags = (select coalesce(array_agg(distinct f), '{}') from unnest(participations.flags || excluded.flags) f),
-        status = case when participations.status = 'counted' and excluded.status = 'suspended' then 'suspended' else participations.status end,
+        status = case when participations.status in ('counted','pending') and excluded.status = 'suspended' then 'suspended' else participations.status end,
         updated_at = now()
       returning id, status`;
 
