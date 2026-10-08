@@ -11,7 +11,9 @@ function create() {
   return postgres(url, {
     // Compatible avec les poolers en mode transaction (Supabase :6543, Neon) : pas de requêtes préparées.
     prepare: false,
-    max: Number(process.env.DB_POOL_MAX ?? 5),
+    // Petites réserves par instance : avec beaucoup d'instances serverless en parallèle, c'est le pooler qui mutualise.
+    max: Number(process.env.DB_POOL_MAX ?? (process.env.VERCEL ? 3 : 5)),
+    max_lifetime: 60 * 30,
     idle_timeout: 20,
     connect_timeout: 10,
     onnotice: () => {},

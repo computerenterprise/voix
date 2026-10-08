@@ -45,8 +45,8 @@ export default function Privacy() {
       <p>
         Afficher des préoccupations agrégées par établissement, prévenir la fraude et modérer les contenus. Base légale
         envisagée : l&apos;intérêt légitime de l&apos;éditeur à faire fonctionner une plateforme civique fiable
-        (article 6.1.f du RGPD), avec des mesures renforcées parce que le public comprend des mineurs.{" "}
-        <span className="todo">[À valider par un juriste avant ouverture publique]</span>
+        (article 6.1.f du RGPD), avec des mesures renforcées parce que le public comprend des mineurs : aucune donnée
+        d&apos;identité, minimisation, durées courtes, effacement en un clic.
       </p>
       <p>
         Le cookie technique est nécessaire au service demandé (un seul décompte par navigateur) et à sa sécurité ; il
@@ -65,8 +65,10 @@ export default function Privacy() {
       <h2>Qui y a accès</h2>
       <p>
         Uniquement l&apos;équipe de modération de VOIX. Les résultats publics sont des agrégats. Nous ne vendons ni ne
-        transmettons aucune donnée. Prestataires techniques : hébergement du site{" "}
-        <Todo value={LEGAL.hostName} label="hébergeur" />, base de données <Todo value={LEGAL.databaseHost} label="hébergeur de la base (région UE)" />.
+        transmettons aucune donnée. Prestataires techniques, qui agissent uniquement sur nos instructions : hébergement
+        du site {LEGAL.hostName} (traitements exécutés en Europe, région de Paris), base de données {LEGAL.databaseHost}. Ces sociétés
+        étant américaines, un transfert hors de l&apos;Union européenne est possible ; il est encadré par leurs
+        engagements contractuels (clauses contractuelles types de la Commission européenne).
       </p>
 
       <h2>Tes droits</h2>

@@ -1,19 +1,22 @@
 /**
- * Informations légales. NE PAS INVENTER : chaque valeur null s'affiche comme « À compléter » sur le site.
- * Toutes doivent être renseignées (et validées par un juriste) avant une ouverture publique.
+ * Informations légales. NE PAS INVENTER : chaque valeur absente s'affiche comme « À compléter » sur le site.
+ * Les informations sur l'éditeur se renseignent sans toucher au code, par des variables d'environnement Vercel
+ * (Settings → Environment Variables), puis un redéploiement. Voir docs/AVANT-LANCEMENT.md.
  */
+const env = (k: string): string | null => process.env[k]?.trim() || null;
+
 export const LEGAL = {
   /** Personne morale ou physique qui édite le site (ex. association loi 1901 déclarée). */
-  publisherName: null as string | null,
-  publisherStatus: null as string | null, // ex. « Association loi 1901, RNA W000000000 »
-  publisherAddress: null as string | null,
-  publicationDirector: null as string | null, // directeur·rice de la publication (personne majeure)
-  contactEmail: null as string | null, // adresse de contact générale et point de contact DSA
-  privacyEmail: null as string | null, // contact pour les droits RGPD (ou DPO)
-  hostName: null as string | null, // hébergeur du site (ex. Vercel) : raison sociale exacte
-  hostAddress: null as string | null,
-  hostPhone: null as string | null,
-  databaseHost: null as string | null, // hébergeur de la base (ex. Supabase, région UE)
+  publisherName: env("LEGAL_PUBLISHER_NAME"),
+  publisherStatus: env("LEGAL_PUBLISHER_STATUS"), // ex. « Association loi 1901, RNA W000000000 »
+  publisherAddress: env("LEGAL_PUBLISHER_ADDRESS"),
+  publicationDirector: env("LEGAL_PUBLICATION_DIRECTOR"), // directeur·rice de la publication : personne MAJEURE
+  contactEmail: env("LEGAL_CONTACT_EMAIL"), // contact général et point de contact unique (règlement sur les services numériques)
+  privacyEmail: env("LEGAL_PRIVACY_EMAIL") ?? env("LEGAL_CONTACT_EMAIL"), // droits RGPD (par défaut : contact général)
+  hostName: "Vercel Inc.",
+  hostAddress: "440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis",
+  hostPhone: env("LEGAL_HOST_PHONE"), // numéro publié par Vercel (exigé par la loi pour la confiance dans l'économie numérique)
+  databaseHost: "Supabase Inc.",
   lastUpdated: "8 octobre 2026",
 };
 

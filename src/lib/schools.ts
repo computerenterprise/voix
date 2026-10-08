@@ -58,13 +58,15 @@ export async function searchSchools(q: string, limit = 10): Promise<{ results: S
   return { results: fuzzy, fuzzy: true };
 }
 
-export async function getSchool(uai: string): Promise<School | null> {
+async function fetchSchool(uai: string): Promise<School | null> {
   if (!/^\d{7}[A-Z]$/.test(uai)) return null;
   const [s] = await sql<School[]>`
     select uai, name, city, postal_code, department_code, department_name, academy, sector, tracks, hidden
     from schools where uai = ${uai}`;
   return s ?? null;
 }
+/** Fiche d'un lycée, gardée 1 min par instance : la page la plus partagée ne refait pas la requête à chaque visite. */
+export const getSchool = memo(fetchSchool, 60_000);
 
 export type CategoryResult = {
   key: CategoryKey;

@@ -6,11 +6,22 @@ juriste pour ceux qui le mentionnent. Le site affiche « [À compléter] » part
 ## A. Bloquant pour un pilote, même restreint
 
 1. **Structure éditrice.** Le site doit avoir un éditeur identifié (LCEN, art. 6). Recommandé : association loi 1901
-   déclarée. Renseigner `src/config/legal.ts` (nom, statut, adresse, contact).
+   déclarée. **Sans toucher au code** : dans Vercel → Settings → Environment Variables, ajouter puis redéployer :
+
+   | Variable | Exemple de contenu |
+   |---|---|
+   | `LEGAL_PUBLISHER_NAME` | Nom de l'association |
+   | `LEGAL_PUBLISHER_STATUS` | Association loi 1901, RNA W… |
+   | `LEGAL_PUBLISHER_ADDRESS` | Adresse du siège |
+   | `LEGAL_PUBLICATION_DIRECTOR` | Prénom Nom (personne majeure) |
+   | `LEGAL_CONTACT_EMAIL` | contact@… (relevée chaque jour) |
+   | `LEGAL_HOST_PHONE` | Téléphone publié par Vercel |
+   | `LEGAL_PRIVACY_EMAIL` | Facultatif ; sinon l'adresse de contact est utilisée |
+
 2. **Directeur ou directrice de la publication** : une personne majeure, responsable pénalement des contenus publiés
    après modération. À désigner.
-3. **Hébergeur** : raison sociale, adresse et téléphone exacts de l'hébergeur retenu (Vercel, Supabase), à copier
-   depuis leurs mentions officielles.
+3. **Hébergeur** : Vercel Inc. (adresse déjà renseignée) ; base de données Supabase Inc. Seul le téléphone de Vercel
+   reste à copier depuis leurs mentions officielles.
 4. **Contact** : une adresse e-mail opérationnelle, relevée chaque jour (point de contact unique au sens du règlement
    européen sur les services numériques, et exercice des droits RGPD).
 5. **Équipe de modération** disponible pendant le pilote, avec un mot de passe admin fort, non partagé hors de
@@ -40,8 +51,18 @@ juriste pour ceux qui le mentionnent. Le site affiche « [À compléter] » part
 
 ## C. Limites connues, assumées et affichées
 
-- Une participation = un navigateur, pas un élève vérifié. Effacer ses cookies ou changer de navigateur permet de
-  participer de nouveau. Les seuils et la détection de rafales limitent l'impact, sans l'empêcher totalement.
-- Une connexion partagée (wifi du lycée) est signalée mais pas suspendue avant 40 participations par jour et par lycée.
+- Une participation = un navigateur, pas un élève vérifié. Au-delà de 3 navigateurs depuis la même connexion, le même
+  jour et pour le même lycée, les nouvelles voix passent « en vérification » et ne comptent qu'après validation
+  (admin → Participations suspectes). Changer de réseau permet encore quelques voix de plus.
 - Le filtre automatique de texte bloque e-mails, téléphones, liens, pseudos et adresses ; il ne détecte pas tous
   les noms propres. La relecture humaine reste obligatoire.
+
+## D. Jour du lancement
+
+- **Base de données** : changer le mot de passe Supabase s'il a circulé, mettre à jour `DATABASE_URL` dans Vercel,
+  redéployer, puis vérifier `/api/health`.
+- **Capacité** : passer Supabase en offre Pro pour la période du lancement (connexions et ressources plus élevées).
+  Côté application : recherche mise en cache par le CDN, résultats et fiches de lycées mis en cache quelques secondes
+  par instance, petites réserves de connexions par instance (`DB_POOL_MAX`, 3 par défaut sur Vercel).
+- **Modération** : au moins une personne de garde, qui ouvre `/admin/moderation` et `/admin/participations`
+  plusieurs fois par jour.
