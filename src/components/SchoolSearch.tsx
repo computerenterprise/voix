@@ -66,7 +66,7 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
 
   return (
     <div className="relative w-full">
-      <label htmlFor={id} className="sr-only">Lycée ou université, ville ou code postal</label>
+      <label htmlFor={id} className="sr-only">Lycée, université ou école, ville ou code postal</label>
       <div className={`flex items-center gap-3 rounded-2xl bg-card ${big ? "h-14 px-5" : "h-12 px-4"} ring-1 ring-transparent transition-shadow focus-within:bg-white focus-within:ring-signal focus-within:shadow-[0_0_0_4px_rgb(0_113_227/0.15)]`}>
         <svg aria-hidden width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="shrink-0 text-muted"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input
@@ -82,7 +82,7 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
           spellCheck={false}
           enterKeyHint="search"
           autoFocus={autoFocus}
-          placeholder="Lycée ou université, ville ou code postal"
+          placeholder="Établissement, ville ou code postal"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={onKey}
@@ -120,7 +120,9 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
                     className={`mx-2 cursor-pointer rounded-xl px-3 py-2.5 ${i === active ? "bg-card" : ""}`}
                   >
                     <p className="font-medium leading-tight">
-                      {r.kind === "universite" && <span className="chip mr-1.5 bg-[#e8f2ff] align-[2px] text-signal">Université</span>}
+                      {(r.kind === "universite" || r.kind === "ecole") && (
+                        <span className="chip mr-1.5 bg-[#e8f2ff] align-[2px] text-signal">{r.kind === "ecole" ? "École" : "Université"}</span>
+                      )}
                       {r.name}
                     </p>
                     <p className="mt-0.5 text-sm text-muted">

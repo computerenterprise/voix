@@ -64,3 +64,6 @@ Parcours couverts :
 - Recherche vérifiée sur les vraies données : « sorbonne », « universite lyon » (Lyon 1, 2, 3), « fac bordeaux ».
 - Vocabulaire adapté sur les pages d'université (étudiants, amphis et TD, vie étudiante, image de partage).
 - Tests : 15/15 e2e (nouveau test « universités : recherche, page et vocabulaire adaptés »), 5/5 unitaires.
+- Écoles ajoutées (même fichier) : 169 écoles et grands établissements (ingénieurs, commerce, art, Sciences Po…) ;
+  4 instituts situés à l'étranger écartés. Recherche vérifiée : « sciences po », « skema », « polytechnique ».
+  Tests : 16/16 e2e.

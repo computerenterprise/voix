@@ -1,8 +1,10 @@
 /**
  * Importe les universités depuis l'export CSV officiel du ministère de l'Enseignement supérieur
  * (data.enseignementsup-recherche.gouv.fr, jeu « fr-esr-principaux-etablissements-enseignement-superieur », Licence Ouverte).
- * Retenus : le type « Université », plus les établissements dont le nom commence par « Université »
- * (Grenoble Alpes, Côte d'Azur, Lorraine, PSL, universités de technologie…). Les écoles ne sont pas importées.
+ * Universités : le type « Université », plus les établissements dont le nom commence par « Université »
+ * (Grenoble Alpes, Côte d'Azur, Lorraine, PSL, universités de technologie…).
+ * Écoles : tous les autres (écoles d'ingénieurs, de commerce, d'art, Sciences Po, grands établissements),
+ * sauf les instituts de recherche situés à l'étranger (Rome, Madrid, Athènes, Le Caire), sans étudiants en France.
  * Usage : DATABASE_URL=... npm run db:import-universites -- chemin/vers/fichier.csv
  */
 import postgres from "postgres";
@@ -38,7 +40,9 @@ for (const r of rows) {
   if (r.length < 4) continue;
   const name = col(r, "uo_lib");
   const type = col(r, "type_d_etablissement");
-  if (!(type === "Université" || /^Universit[ée] /i.test(name))) { skipped++; continue; }
+  const country = col(r, "pays_etranger_acheminement");
+  if (country && country !== "France") { skipped++; continue; }
+  const isUniversity = type === "Université" || /^Universit[ée] /i.test(name);
   const uai = col(r, "uai").split(/[;,\s]+/)[0].toUpperCase();
   if (!/^\d{7}[A-Z]$/.test(uai)) { skipped++; continue; }
   const city = cityOf(col(r, "com_nom"));
@@ -51,8 +55,8 @@ for (const r of rows) {
     academy: col(r, "aca_nom"),
     sector: col(r, "secteur_d_etablissement") === "public" ? "Public" : "Privé",
     tracks: [],
-    search: normalize(`${name} ${col(r, "nom_court")} ${sigle} universite fac ${city} ${postal}`),
-    kind: "universite",
+    search: normalize(`${name} ${col(r, "nom_court")} ${sigle} ${isUniversity ? "universite fac" : "ecole"} ${city} ${postal}`),
+    kind: isUniversity ? "universite" : "ecole",
     source: "esr-etablissements",
   });
 }
@@ -60,6 +64,7 @@ for (const r of rows) {
 const sql = postgres(process.env.DATABASE_URL!, { prepare: false, max: 1, onnotice: () => {} });
 async function main() {
   const list = [...out.values()];
+  if (!list.length) throw new Error("Aucun établissement trouvé dans le fichier : import annulé.");
   await sql`
     insert into schools ${sql(list, "uai", "name", "city", "postal_code", "department_code", "department_name", "academy", "sector", "tracks", "search", "kind", "source")}
     on conflict (uai) do update set
@@ -74,7 +79,8 @@ async function main() {
   const hidden = await sql`
     update schools set hidden = true, updated_at = now()
     where source = 'esr-etablissements' and not (uai = any(${uais})) and not hidden`;
-  console.log(`${list.length} universités importées ou mises à jour ; ${skipped} lignes ignorées (écoles, autres) ; ${removed.count} retirées, ${hidden.count} masquées.`);
+  const n = (k: string) => list.filter((s) => s.kind === k).length;
+  console.log(`${n("universite")} universités et ${n("ecole")} écoles importées ou mises à jour ; ${skipped} lignes ignorées (étranger ou sans UAI) ; ${removed.count} retirées, ${hidden.count} masquées.`);
   await sql.end();
 }
 main().catch(async (e) => {

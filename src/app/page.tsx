@@ -49,7 +49,7 @@ export default async function Home() {
           <div className="card px-6 py-8 text-center">
             <p className="font-display text-2xl font-semibold">Les premiers résultats s&apos;afficheront ici.</p>
             <p className="mt-2 text-sm text-muted">
-              {stats ? `${fmt(stats.totalSchools)} lycées et ${fmt(stats.totalUniversities)} universités référencés. ` : ""}Les chiffres viennent uniquement des participations réelles.
+              {stats ? `${fmt(stats.totalSchools)} lycées et ${fmt(stats.totalUniversities)} universités et écoles référencés. ` : ""}Les chiffres viennent uniquement des participations réelles.
             </p>
           </div>
         )}
@@ -63,7 +63,7 @@ export default async function Home() {
         <h2 className="font-display text-center text-3xl font-bold sm:text-5xl">Comment ça marche.</h2>
         <ol className="mt-10 grid gap-3 sm:grid-cols-3">
           {[
-            ["Trouve ton établissement.", "Par son nom, sa ville ou son code postal. Tous les lycées et toutes les universités de France sont référencés."],
+            ["Trouve ton établissement.", "Par son nom, sa ville ou son code postal. Lycées, universités et grandes écoles : tous sont référencés."],
             ["Dis ce qui coince.", "Soutiens une préoccupation existante ou ajoute la tienne. Aucun nom, aucun compte."],
             ["Partage la page.", "Plus il y a de participations, plus les priorités de ton établissement sont lisibles."],
           ].map(([t, d], i) => (

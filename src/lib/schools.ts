@@ -146,7 +146,7 @@ export const getHomeStats = memo(
         (select count(distinct school_uai)::int from participations where status = 'counted') as schools,
         (select count(*)::int from reports where status = 'approved') as moderated,
         (select count(*)::int from schools where not hidden and kind = 'lycee') as "totalSchools",
-        (select count(*)::int from schools where not hidden and kind = 'universite') as "totalUniversities"`;
+        (select count(*)::int from schools where not hidden and kind <> 'lycee') as "totalUniversities"`;
     return row;
   },
   30_000,

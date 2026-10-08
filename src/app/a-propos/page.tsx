@@ -71,7 +71,7 @@ export default function About() {
       <h2>Les données des établissements</h2>
       <p>
         La liste des lycées provient de l&apos;Annuaire de l&apos;Éducation publié par le ministère de l&apos;Éducation
-        nationale sur data.education.gouv.fr ; celle des universités, de la liste des principaux établissements
+        nationale sur data.education.gouv.fr ; celle des universités et des écoles, de la liste des principaux établissements
         d&apos;enseignement supérieur publiée par le ministère de l&apos;Enseignement supérieur sur
         data.enseignementsup-recherche.gouv.fr. Les deux sont sous Licence Ouverte.
       </p>

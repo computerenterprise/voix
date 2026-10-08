@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { words } from "@/lib/kind";
 
 export function ShareBox({ url, name, compact = false, kind }: { url: string; name: string; compact?: boolean; kind?: string }) {
   const [copied, setCopied] = useState(false);
-  const text = `${name} : voici les préoccupations exprimées dans ${kind === "universite" ? "notre université" : "notre lycée"}. Fais entendre la tienne sur VOIX.`;
+  const text = `${name} : voici les préoccupations exprimées dans ${words(kind).our}. Fais entendre la tienne sur VOIX.`;
 
   async function nativeShare() {
     if (navigator.share) {

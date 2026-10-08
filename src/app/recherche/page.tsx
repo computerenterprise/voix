@@ -13,7 +13,7 @@ export default function SearchPage() {
       </div>
       <p className="mt-10 text-sm text-muted">
         Ton établissement n&apos;apparaît pas ? Les lycées viennent de l&apos;annuaire officiel de l&apos;Éducation nationale,
-        les universités de la liste officielle du ministère de l&apos;Enseignement supérieur.
+        les universités et écoles de la liste officielle du ministère de l&apos;Enseignement supérieur.
         Essaie une autre orthographe, ou <a className="link" href="/signaler">signale-nous l&apos;oubli</a>.
       </p>
     </section>

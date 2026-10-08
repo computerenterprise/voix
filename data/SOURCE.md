@@ -7,6 +7,6 @@ l'import (idempotent) s'exécute à chaque déploiement.
 
 `esr-principaux-etablissements.csv` : export du jeu « Principaux établissements d'enseignement supérieur »
 (ministère de l'Enseignement supérieur et de la Recherche, data.enseignementsup-recherche.gouv.fr), 245 lignes,
-téléchargé le 8 octobre 2026. Licence Ouverte 2.0. Seules les universités sont importées (type « Université » et
-établissements dont le nom commence par « Université » : 72) ; les écoles ne le sont pas
-(`scripts/import-universities.ts`, exécuté à chaque déploiement).
+téléchargé le 8 octobre 2026. Licence Ouverte 2.0. Importés : les universités (type « Université » et établissements
+dont le nom commence par « Université ») et toutes les écoles et grands établissements, sauf les instituts situés à
+l'étranger (`scripts/import-universities.ts`, exécuté à chaque déploiement).

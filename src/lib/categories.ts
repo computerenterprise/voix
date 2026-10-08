@@ -10,10 +10,10 @@ export const CATEGORIES = [
 
 export type CategoryKey = (typeof CATEGORIES)[number]["key"];
 export const CATEGORY_KEYS = CATEGORIES.map((c) => c.key) as CategoryKey[];
-/** Libellé d'une préoccupation ; formulé pour l'université quand `kind` vaut « universite ». */
+/** Libellé d'une préoccupation ; formulé pour le supérieur quand `kind` vaut « universite » ou « ecole ». */
 export const categoryLabel = (k: string, kind?: string) => {
   const c = CATEGORIES.find((x) => x.key === k);
-  return c ? (kind === "universite" ? c.uni : c.label) : k;
+  return c ? (kind === "universite" || kind === "ecole" ? c.uni : c.label) : k;
 };
 export const isCategory = (k: string): k is CategoryKey => (CATEGORY_KEYS as string[]).includes(k);
 
