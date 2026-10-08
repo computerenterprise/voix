@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
+import { HeaderLogo } from "@/components/HeaderLogo";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -39,9 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <header className="sticky top-0 z-30 border-b border-black/5 bg-white/75 backdrop-blur-xl backdrop-saturate-150">
           <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-4">
-            <Link href="/" aria-label="VOIX, accueil" className="shrink-0 rounded-md">
-              <Logo className="h-[26px] w-auto sm:h-[30px]" />
-            </Link>
+            <HeaderLogo />
             <nav aria-label="Navigation principale" className="flex items-center gap-0.5 whitespace-nowrap text-[0.8125rem] text-ink-2">
               <Link href="/tableau" className="hidden min-[360px]:inline rounded-full px-1.5 py-2 transition-colors hover:text-ink min-[400px]:px-2 sm:px-3">Tableau</Link>
               <Link href="/a-propos" className="rounded-full px-1.5 py-2 transition-colors hover:text-ink min-[400px]:px-2 sm:px-3">À propos</Link>
