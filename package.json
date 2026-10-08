@@ -11,7 +11,8 @@
     "db:import": "tsx scripts/import-schools.ts",
     "admin:hash": "tsx scripts/hash-password.ts",
     "test": "node --import tsx --test tests/unit/*.test.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "vercel-build": "npm run db:migrate && npm run db:import -- data/annuaire-lycees.csv && next build"
   },
   "dependencies": {
     "next": "16.4.0",

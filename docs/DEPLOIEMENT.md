@@ -6,11 +6,8 @@ Durée : environ 20 minutes.
 
 1. Créer un projet Supabase en **région UE** (Paris `eu-west-3` ou Francfort `eu-central-1`).
 2. Settings → Database → Connection string → **Transaction pooler** (port 6543). C'est `DATABASE_URL`.
-3. Depuis un poste avec Node 20+ :
-   ```bash
-   DATABASE_URL="..." npm run db:migrate
-   DATABASE_URL="..." npm run db:import -- fr-en-annuaire-education.csv
-   ```
+3. Rien à lancer à la main : à chaque déploiement, Vercel exécute `vercel-build`, qui applique les migrations puis
+   importe `data/annuaire-lycees.csv` (idempotent) avant de construire le site.
 4. Activer les sauvegardes (quotidiennes incluses ; PITR sur offre payante). Copie indépendante : `scripts/backup.sh`.
 5. La migration `002_rls.sql` active la sécurité au niveau des lignes (RLS) sans aucune politique : la clé
    publique `anon` de Supabase ne peut lire ni écrire aucune table. L'application, elle, se connecte en propriétaire.
