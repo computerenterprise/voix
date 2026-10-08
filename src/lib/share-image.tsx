@@ -28,7 +28,12 @@ function LogoMark({ size }: { size: number }) {
     <div style={{ display: "flex", alignItems: "center", fontFamily: "Inter", fontSize: size, fontWeight: 700, color: INK, letterSpacing: -1, lineHeight: 1 }}>
       <span>V</span>
       <div style={{ display: "flex", width: size * 0.82, height: size * 0.82, borderRadius: 999, background: SIGNAL, alignItems: "center", justifyContent: "center", margin: `0 ${size * 0.04}px` }}>
-        <div style={{ width: size * 0.3, height: size * 0.3, borderRadius: 999, background: "#fff" }} />
+        <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 24 24">
+          <g fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round">
+            <circle cx="12" cy="12" r="10.5" />
+            <path d="M12 1.5v21M12 12l-7.4 7.4M12 12l7.4 7.4" />
+          </g>
+        </svg>
       </div>
       <span>IX</span>
     </div>
