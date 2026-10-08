@@ -1,69 +1,112 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getHomeStats } from "@/lib/schools";
+import { CATEGORIES } from "@/lib/categories";
+import { SchoolSearch } from "@/components/SchoolSearch";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const fmt = (n: number) => n.toLocaleString("fr-FR");
+
+export default async function Home() {
+  const stats = await getHomeStats().catch(() => null);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <section className="mx-auto max-w-5xl px-4 pt-10 pb-12 sm:pt-20">
+        <p className="rise chip bg-ink text-paper">
+          <span className="pulse-dot inline-block h-2 w-2 rounded-full bg-signal" /> Ton lycée. Ta voix.
+        </p>
+        <h1 className="rise rise-2 font-display mt-5 text-[2.6rem] leading-[0.98] font-extrabold sm:text-7xl sm:leading-[0.95]">
+          Et si ton lycée pouvait enfin <span className="relative whitespace-nowrap">se faire<span aria-hidden className="absolute inset-x-0 bottom-1 -z-10 h-3 bg-signal/80 sm:h-5" /></span> entendre&nbsp;?
+        </h1>
+        <p className="rise rise-3 mt-5 max-w-xl text-lg text-ink-2 sm:text-xl">
+          Signale ce qui ne fonctionne pas, découvre les priorités de ton établissement et fais entendre ta voix.
+        </p>
+        <div className="rise rise-4 mt-8 max-w-xl">
+          <SchoolSearch />
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link href="/recherche" className="btn btn-primary">Trouver mon lycée</Link>
+            <span className="text-sm text-muted">Anonyme · 30 secondes · sans compte</span>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section aria-label="Chiffres en direct" className="mx-auto max-w-5xl px-4">
+        {stats && stats.participations > 0 ? (
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            {[
+              [fmt(stats.participations), stats.participations > 1 ? "participations comptabilisées" : "participation comptabilisée"],
+              [fmt(stats.schools), stats.schools > 1 ? "lycées concernés" : "lycée concerné"],
+              [fmt(stats.moderated), stats.moderated > 1 ? "témoignages relus et publiés" : "témoignage relu et publié"],
+            ].map(([n, l]) => (
+              <div key={l} className="card p-4 sm:p-6">
+                <p className="font-display text-3xl font-extrabold sm:text-5xl">{n}</p>
+                <p className="mt-1 text-xs leading-snug text-muted sm:text-sm">{l}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="card flex flex-col gap-2 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-display text-2xl font-extrabold">Les premiers résultats s&apos;afficheront ici.</p>
+            <p className="text-sm text-muted">
+              {stats ? `${fmt(stats.totalSchools)} lycées référencés. ` : ""}Les chiffres viennent uniquement des participations réelles.
+            </p>
+          </div>
+        )}
+        <p className="mt-3 text-xs text-muted">
+          Chiffres en direct issus de la base VOIX. Une participation n&apos;est pas un élève vérifié :{" "}
+          <Link href="/a-propos#limites" className="link">voir nos limites</Link>.
+        </p>
+      </section>
+
+      <section className="mx-auto mt-20 max-w-5xl px-4">
+        <h2 className="font-display text-3xl font-extrabold sm:text-5xl">Comment ça marche</h2>
+        <ol className="mt-8 grid gap-4 sm:grid-cols-3">
+          {[
+            ["Trouve ton lycée", "Par son nom, sa ville ou son code postal. Tous les lycées de France sont référencés."],
+            ["Dis ce qui coince", "Soutiens une préoccupation existante ou ajoute la tienne. Aucun nom, aucun compte."],
+            ["Partage la page", "Plus il y a de participations, plus les priorités de ton lycée sont lisibles."],
+          ].map(([t, d], i) => (
+            <li key={t} className="card p-6">
+              <span className="font-display grid h-10 w-10 place-items-center rounded-full bg-ink text-lg font-extrabold text-paper">{i + 1}</span>
+              <h3 className="mt-4 text-xl font-bold">{t}</h3>
+              <p className="mt-2 text-ink-2">{d}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="mx-auto mt-20 max-w-5xl px-4">
+        <h2 className="font-display text-3xl font-extrabold sm:text-5xl">Ce que tu peux signaler</h2>
+        <ul className="mt-8 flex flex-wrap gap-2">
+          {CATEGORIES.map((c) => (
+            <li key={c.key} className="rounded-full border-2 border-ink bg-card px-4 py-2 text-base font-semibold">
+              <span aria-hidden>{c.emoji}</span> {c.label}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mx-auto mt-20 max-w-5xl px-4">
+        <div className="rounded-[2rem] bg-ink p-7 text-paper sm:p-12">
+          <h2 className="font-display text-3xl font-extrabold sm:text-5xl">Anonyme. Modéré. Indépendant.</h2>
+          <ul className="mt-6 grid gap-5 sm:grid-cols-3">
+            <li>
+              <p className="font-bold text-signal">Aucune donnée d&apos;identité</p>
+              <p className="mt-1 text-paper/80">Pas de nom, pas de téléphone, pas de photo, pas de géolocalisation. Pas de profil public.</p>
+            </li>
+            <li>
+              <p className="font-bold text-signal">Rien n&apos;est publié sans relecture</p>
+              <p className="mt-1 text-paper/80">Les messages écrits sont relus par l&apos;équipe. Les accusations nominatives sont refusées.</p>
+            </li>
+            <li>
+              <p className="font-bold text-signal">Sans parti ni syndicat</p>
+              <p className="mt-1 text-paper/80">VOIX agrège des constats pour améliorer les conditions d&apos;étude. Rien d&apos;autre.</p>
+            </li>
+          </ul>
+          <Link href="/a-propos" className="btn btn-primary mt-8">Notre méthode</Link>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }

@@ -1,0 +1,7 @@
+identifiant_de_l_etablissement;nom_etablissement;type_etablissement;statut_public_prive;adresse_1;code_postal;nom_commune;code_departement;libelle_departement;libelle_academie;voie_generale;voie_technologique;voie_professionnelle;etat;date_fermeture
+9990001A;Lycée général et technologique Fictif Victor-Hugo;Lycée;Public;1 rue Imaginaire;99001;Villefictive;999;Département Fictif;Académie Fictive;1;1;0;OUVERT;
+9990002B;Lycée professionnel Fictif Victor Hugo;Lycée;Public;2 rue Imaginaire;99100;Autreville;999;Département Fictif;Académie Fictive;0;0;1;OUVERT;
+9990003C;Lycée polyvalent Fictif Marie-Curie;Lycée;Privé sous contrat;3 rue Imaginaire;99002;Villefictive;999;Département Fictif;Académie Fictive;1;1;1;OUVERT;
+9990004D;Collège Fictif Jean-Moulin;Collège;Public;4 rue Imaginaire;99001;Villefictive;999;Département Fictif;Académie Fictive;0;0;0;OUVERT;
+9990005E;Lycée Fictif Fermé;Lycée;Public;5 rue Imaginaire;99001;Villefictive;999;Département Fictif;Académie Fictive;1;0;0;FERME;2020-07-01
+9990006F;"Lycée Fictif ""Les Écureuils""; annexe";Lycée;Public;6 rue Imaginaire;99300;Saint-Étienne-Fictif;999;Département Fictif;Académie Fictive;1;0;0;OUVERT;

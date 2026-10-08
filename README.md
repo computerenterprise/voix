@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VOIX — « Ton lycée. Ta voix. »
 
-## Getting Started
+Plateforme civique indépendante : les lycéens signalent les problèmes de leur établissement, soutiennent les
+préoccupations des autres élèves et consultent des résultats agrégés.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router, TypeScript), Tailwind CSS 4, rendu serveur.
+- PostgreSQL (Supabase, Neon ou tout Postgres ≥ 14 avec `pg_trgm`), client `postgres` sans requêtes préparées
+  (compatible poolers).
+- Hébergement visé : Vercel (région `cdg1`, Paris) + base en région UE.
+- Aucune dépendance tierce côté navigateur : pas d'analytics, pas de CDN externe, polices auto-hébergées.
+
+## Démarrer en local
 
 ```bash
+npm install
+cp .env.example .env.local        # puis remplir
+npm run db:migrate
+npm run db:import -- fr-en-annuaire-education.csv   # export officiel, voir ci-dessous
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Données des lycées : export CSV du jeu « Annuaire de l'éducation » (data.education.gouv.fr), filtré ou non
+(le script ne garde que les lycées ouverts) :
+https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-annuaire-education/exports/csv?where=type_etablissement%3D%22Lyc%C3%A9e%22&delimiter=%3B
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tests
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm test                 # tests unitaires (filtres de texte, normalisation, CSV)
+npm run test:e2e         # 12 parcours Playwright sur une base voix_test (données FICTIVES)
+```
 
-## Learn More
+La base e2e est `postgres://voix@127.0.0.1:5432/voix_test` par défaut (`E2E_DATABASE_URL` pour changer) ;
+préparer avec `npm run db:migrate` puis `npm run db:import -- tests/fixtures/annuaire-fictif.csv`.
 
-To learn more about Next.js, take a look at the following resources:
+## Déploiement
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Voir [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md). Avant toute ouverture publique : [docs/AVANT-LANCEMENT.md](docs/AVANT-LANCEMENT.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Élément | Où |
+|---|---|
+| Schéma SQL | `db/migrations/` |
+| Recherche (trigrammes, homonymes, fautes) | `src/lib/schools.ts` |
+| Participation, anti-abus | `src/lib/participation.ts`, `src/app/api/participations` |
+| Filtre du texte libre | `src/lib/text-guard.ts` |
+| Images de partage (Open Graph, story) | `src/lib/share-image.tsx` |
+| Administration | `src/app/admin` |
+| Purge RGPD quotidienne | `src/app/api/cron/purge` + `vercel.json` |
+| Informations légales à compléter | `src/config/legal.ts` |
