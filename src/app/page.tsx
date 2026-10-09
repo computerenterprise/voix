@@ -3,13 +3,21 @@ import { getHomeStats } from "@/lib/schools";
 import { CATEGORIES } from "@/lib/categories";
 import { SchoolSearch } from "@/components/SchoolSearch";
 import { Logo } from "@/components/Logo";
+import { SolidarityButton } from "@/components/SolidarityButton";
+import { getDevice } from "@/lib/device";
+import { isSolidary, solidarityTotal } from "@/lib/solidarity";
 
 export const dynamic = "force-dynamic";
 
 const fmt = (n: number) => n.toLocaleString("fr-FR");
 
 export default async function Home() {
-  const stats = await getHomeStats().catch(() => null);
+  const device = await getDevice(false);
+  const [stats, solidaires, solidary] = await Promise.all([
+    getHomeStats().catch(() => null),
+    solidarityTotal().catch(() => 0),
+    isSolidary(device?.hash).catch(() => false),
+  ]);
 
   return (
     <>
@@ -22,7 +30,11 @@ export default async function Home() {
         <p className="rise rise-3 mx-auto mt-5 max-w-xl text-[1.1875rem] leading-relaxed text-muted sm:text-[1.3125rem]">
           Signale ce qui ne fonctionne pas, découvre les priorités de ton établissement et fais entendre ta voix.
         </p>
-        <div className="rise rise-4 mx-auto mt-9 max-w-xl text-left">
+        <div id="solidarite" data-testid="solidarite" className="rise rise-3 mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-[1.5rem] bg-card px-5 py-4">
+          <span className="text-sm text-muted">Pas élève ni étudiant&nbsp;? Soutiens la cause&nbsp;:</span>
+          <SolidarityButton done={solidary} total={solidary ? Math.max(solidaires, 1) : solidaires} />
+        </div>
+        <div className="rise rise-4 mx-auto mt-7 max-w-xl text-left">
           <SchoolSearch />
         </div>
         <div className="rise rise-4 mt-6 flex flex-col items-center gap-3">
@@ -44,11 +56,6 @@ export default async function Home() {
                 <p className="mt-1.5 text-xs leading-snug text-muted sm:text-sm">{l}</p>
               </div>
             ))}
-            {stats.solidaires > 0 && (
-              <p className="col-span-3 mt-1 text-center text-sm text-muted">
-                ☮ <strong className="tabular-nums text-ink">{fmt(stats.solidaires)}</strong> personne{stats.solidaires > 1 ? "s" : ""} solidaire{stats.solidaires > 1 ? "s" : ""} partout en France
-              </p>
-            )}
           </div>
         ) : (
           <div className="card px-6 py-8 text-center">

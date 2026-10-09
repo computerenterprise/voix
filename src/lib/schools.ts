@@ -141,7 +141,7 @@ async function computeSchoolResults(uai: string): Promise<SchoolResults> {
 export const getSchoolResultsCached = memo(computeSchoolResults, 15_000);
 export const getSchoolResultsFresh = computeSchoolResults;
 
-export type HomeStats = { participations: number; schools: number; moderated: number; totalSchools: number; totalUniversities: number; solidaires: number };
+export type HomeStats = { participations: number; schools: number; moderated: number; totalSchools: number; totalUniversities: number };
 
 export const getHomeStats = memo(
   async (): Promise<HomeStats> => {
@@ -150,7 +150,6 @@ export const getHomeStats = memo(
         (select count(*)::int from participations where status = 'counted') as participations,
         (select count(distinct school_uai)::int from participations where status = 'counted') as schools,
         (select count(*)::int from reports where status = 'approved') as moderated,
-        (select count(*)::int from solidarity where status = 'counted') as solidaires,
         (select count(*)::int from schools where not hidden and kind = 'lycee') as "totalSchools",
         (select count(*)::int from schools where not hidden and kind <> 'lycee') as "totalUniversities"`;
     return row;

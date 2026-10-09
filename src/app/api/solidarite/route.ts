@@ -5,12 +5,11 @@ import { clientIp, json, sameOrigin } from "@/lib/request";
 import { ipHash } from "@/lib/security";
 import { logError } from "@/lib/log";
 import { verifyPow } from "@/lib/pow";
-import { addSolidarity } from "@/lib/solidarity";
+import { addSolidarity, SOLIDARITY_SCOPE } from "@/lib/solidarity";
 
 export const dynamic = "force-dynamic";
 
 const Input = z.object({
-  uai: z.string().regex(/^\d{7}[A-Z]$/),
   pow: z.object({ c: z.string().max(200), n: z.string().regex(/^\d{1,12}$/) }).optional(),
 });
 
@@ -21,12 +20,11 @@ export async function POST(req: Request) {
   try {
     const ip = ipHash(await clientIp());
     if (!(await rateLimit(`solid:${ip}`, 30, 3600))) return json({ error: "Trop de soutiens depuis cette connexion. Réessaie plus tard." }, 429);
-    if (await verifyPow(parsed.data.pow, parsed.data.uai)) {
+    if (await verifyPow(parsed.data.pow, SOLIDARITY_SCOPE)) {
       return json({ error: "La vérification anti-robot a échoué. Recharge la page et réessaie." }, 400);
     }
     const device = await getDevice(true);
-    const res = await addSolidarity(parsed.data.uai, device!.hash, ip);
-    if (res === "unknown") return json({ error: "Établissement introuvable." }, 404);
+    const res = await addSolidarity(device!.hash, ip);
     return json({ ok: true, already: res === "already" });
   } catch (e) {
     await logError("api/solidarite", e);

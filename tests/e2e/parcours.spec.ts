@@ -260,23 +260,27 @@ test("mot de passe libre : regroupement par établissement et tableau publié pa
   await sql.end();
 });
 
-test("« Je suis solidaire » : soutien des non-élèves compté à part", async ({ browser }) => {
+test("« Je suis solidaire » : soutien à la cause sur l'accueil, compté à part", async ({ browser }) => {
   const ctx = await browser.newContext({ locale: "fr-FR" });
   const p = await ctx.newPage();
-  await p.goto(`/lycee/${SCHOOL}/participer`);
-  await expect(p.getByRole("link", { name: "« Je suis solidaire »" })).toBeVisible();
+  // Plus de bouton sur les pages d'établissement : on soutient la cause, pas un lycée
   await p.goto(`/lycee/${SCHOOL}`);
+  await expect(p.getByRole("button", { name: /Je suis solidaire/ })).toHaveCount(0);
   const total = await p.getByTestId("total").textContent();
+  await p.goto(`/lycee/${SCHOOL}/participer`);
+  await p.getByRole("link", { name: "« Je suis solidaire »" }).click();
+  await expect(p).toHaveURL(/\/#solidarite$/);
   const box = p.getByTestId("solidarite");
   await expect(box).not.toContainText("personne solidaire");
   await box.getByRole("button", { name: "☮ Je suis solidaire" }).click();
   await expect(box.getByText("Tu es solidaire")).toBeVisible();
-  await expect(box).toContainText("1 personne solidaire");
-  // Ne touche pas aux préoccupations des élèves, et ne compte qu'une fois par navigateur
+  await expect(box).toContainText("1 personne solidaire partout en France");
+  // Un seul soutien par navigateur, sans effet sur les participations des élèves
   await p.reload();
-  await expect(p.getByTestId("total")).toHaveText(total!);
   await expect(box.getByText("Tu es solidaire")).toBeVisible();
   await expect(box).toContainText("1 personne solidaire");
+  await p.goto(`/lycee/${SCHOOL}`);
+  await expect(p.getByTestId("total")).toHaveText(total!);
   await ctx.close();
 });
 
