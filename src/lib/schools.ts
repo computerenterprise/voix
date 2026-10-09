@@ -163,12 +163,11 @@ export type Dashboard = {
   national: { key: CategoryKey; supports: number; percent: number }[];
   departments: { code: string; name: string; total: number; schools: number; top: { key: CategoryKey; percent: number }[] }[];
   cities: { city: string; department: string; total: number; schools: number; top: { key: CategoryKey; percent: number }[] }[];
-  daily: { day: string; n: number }[];
 };
 
 export const getDashboard = memo(
   async (minDept: number, minCity: number): Promise<Dashboard> => {
-    const [[tot], national, deptRows, cityRows, daily] = await Promise.all([
+    const [[tot], national, deptRows, cityRows] = await Promise.all([
       sql<{ total: number; schools: number }[]>`
         select count(*)::int as total, count(distinct school_uai)::int as schools from participations where status = 'counted'`,
       sql<{ key: CategoryKey; supports: number }[]>`
@@ -192,9 +191,6 @@ export const getDashboard = memo(
         select t.city, t.department_name as department, c as key, count(*)::int as n, t.total, t.schools
         from t join p on p.city = t.city and p.department_name = t.department_name, unnest(p.categories) c
         group by 1, 2, 3, t.total, t.schools`,
-      sql<{ day: string; n: number }[]>`
-        select to_char(date_trunc('day', created_at), 'YYYY-MM-DD') as day, count(*)::int as n
-        from participations where status = 'counted' and created_at > now() - interval '30 days' group by 1 order by 1`,
     ]);
     const total = tot.total;
     const group = <T extends { key: CategoryKey; n: number; total: number }>(rows: T[], id: (r: T) => string) => {
@@ -219,7 +215,6 @@ export const getDashboard = memo(
       cities: group(cityRows, (r) => r.city + "|" + r.department)
         .map((rs) => ({ city: rs[0].city, department: rs[0].department, total: rs[0].total, schools: rs[0].schools, top: top(rs) }))
         .sort((a, b) => a.city.localeCompare(b.city)),
-      daily,
     };
   },
   60_000,

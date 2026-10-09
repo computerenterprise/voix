@@ -41,53 +41,6 @@ export function HBarChart({ data, unit = "participations" }: { data: Bar[]; unit
     </ul>
   );
 }
-
-/** Colonnes journalières (30 derniers jours), infobulle au survol ou au focus. */
-export function DailyChart({ data }: { data: { day: string; n: number }[] }) {
-  const [hover, setHover] = useState<number | null>(null);
-  const days = useMemo(() => {
-    const map = new Map(data.map((d) => [d.day, d.n]));
-    const out: { day: string; n: number }[] = [];
-    const now = new Date();
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
-      const key = d.toISOString().slice(0, 10);
-      out.push({ day: key, n: map.get(key) ?? 0 });
-    }
-    return out;
-  }, [data]);
-  const max = Math.max(1, ...days.map((d) => d.n));
-  const fmt = (s: string) => new Date(s + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
-  return (
-    <div>
-      <div className="relative flex h-40 items-end gap-[2px]" role="img" aria-label="Participations par jour sur 30 jours">
-        {days.map((d, i) => (
-          <div
-            key={d.day}
-            className="relative flex h-full flex-1 items-end"
-            onMouseEnter={() => setHover(i)}
-            onMouseLeave={() => setHover(null)}
-          >
-            <div
-              className="w-full rounded-t-[4px]"
-              style={{ height: `${Math.max((d.n / max) * 100, d.n ? 3 : 1)}%`, background: hover === i ? "#0058b0" : d.n ? "var(--signal)" : "var(--paper-2)" }}
-            />
-            {hover === i && (
-              <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1 text-xs font-semibold text-paper">
-                {fmt(d.day)} · {d.n}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-      <div className="mt-2 flex justify-between text-xs text-muted">
-        <span>{fmt(days[0].day)}</span>
-        <span>aujourd&apos;hui</span>
-      </div>
-    </div>
-  );
-}
-
 type Area = { id: string; name: string; sub?: string; total: number; schools: number; top: { label: string; percent: number }[] };
 
 /** Explorateur filtrable (départements ou villes) : un tableau lisible, pas de classement. */

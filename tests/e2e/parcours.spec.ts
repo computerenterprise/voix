@@ -301,6 +301,10 @@ test("partage : lien unique, Open Graph et images", async ({ page, request }) =>
 test("tableau national et pages légales", async ({ page }) => {
   await page.goto("/tableau");
   await expect(page.getByRole("heading", { name: "Problèmes cités" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Participations par jour" })).toHaveCount(0);
+  const api = await (await page.request.get("/api/compteurs")).json();
+  expect(api.participations).toBeGreaterThan(0);
+  expect(Object.keys(api).sort()).toEqual(["participations", "schools", "solidaires"]);
   await expect(page.getByText("Pas de classement des établissements", { exact: false })).toBeVisible();
   for (const p of ["/a-propos", "/confidentialite", "/mentions-legales", "/charte"]) {
     const r = await page.goto(p);
@@ -343,4 +347,13 @@ test("en-têtes de sécurité", async ({ request }) => {
   expect(h["x-content-type-options"]).toBe("nosniff");
   expect(h["strict-transport-security"]).toBeTruthy();
   expect(h["x-powered-by"]).toBeUndefined();
+});
+
+test("tableau : les compteurs montent en direct", async ({ page }) => {
+  await page.goto("/tableau");
+  const part = page.getByTestId("compteur-direct").first();
+  const solid = page.getByTestId("compteur-direct").last();
+  await page.route("**/api/compteurs", (r) => r.fulfill({ json: { participations: 12345, schools: 3, solidaires: 678 } }));
+  await expect(part).toContainText("12\u202f345", { timeout: 15_000 });
+  await expect(solid).toContainText("678");
 });
