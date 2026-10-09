@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 btn btn-dark btn-sm">
           Aller au contenu
         </a>
-        <header className="sticky top-0 z-30 border-b border-black/5 bg-[rgb(251_250_247/0.78)] backdrop-blur-xl backdrop-saturate-150">
+        <header className="sticky top-0 z-30 border-b border-line bg-paper">
           <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-4">
             <HeaderLogo />
             <nav aria-label="Navigation principale" className="flex items-center gap-0.5 whitespace-nowrap text-[0.9375rem] text-ink-2">

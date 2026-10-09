@@ -5,14 +5,16 @@ import { logError } from "@/lib/log";
 
 export const dynamic = "force-dynamic";
 
-/** Application quotidienne des durées de conservation (appelée par Vercel Cron avec CRON_SECRET). */
+/** Application quotidienne des durées de conservation (appelée par Vercel Cron avec CRON_SECRET).
+ *  L'empreinte de connexion des auteurs de messages écrits est gardée 1 an (décret n° 2021-1362, LCEN). */
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.get("authorization") ?? "";
   if (!secret || !safeEqual(auth, `Bearer ${secret}`)) return json({ error: "Non autorisé" }, 401);
   try {
     const r = await sql.begin(async (tx) => {
-      const ip = await tx`update participations set ip_hash = 'purged' where ip_hash <> 'purged' and created_at < now() - interval '30 days'`;
+      const ip = await tx`update participations p set ip_hash = 'purged' where ip_hash <> 'purged' and created_at < now() - interval '30 days'
+        and not exists (select 1 from reports r where r.participation_id = p.id and r.status <> 'rejected')`;
       const parts = await tx`delete from participations where created_at < now() - interval '12 months'`;
       await tx`update solidarity set ip_hash = 'purged' where ip_hash <> 'purged' and created_at < now() - interval '30 days'`;
       await tx`delete from solidarity where created_at < now() - interval '12 months'`;

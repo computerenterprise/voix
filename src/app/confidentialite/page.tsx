@@ -37,7 +37,9 @@ export default function Privacy() {
         </li>
         <li>
           <strong>Une empreinte de ton adresse IP</strong>, transformée de façon irréversible et différente chaque jour,
-          uniquement pour détecter les abus (envois en masse). Ton adresse IP elle-même n&apos;est pas enregistrée.
+          uniquement pour détecter les abus (envois en masse). Ton adresse IP elle-même n&apos;est pas enregistrée. Si tu
+          écris un message, la loi nous oblige à garder cette empreinte un an : elle ne peut servir qu&apos;à répondre à
+          une demande de la justice.
         </li>
         <li>
           <strong>Si tu saisis un mot de passe</strong> (facultatif) : nous enregistrons seulement son empreinte

@@ -21,7 +21,7 @@ export default async function Home() {
 
   return (
     <>
-      <section className="halo halo-peace mx-auto max-w-3xl px-4 pt-10 pb-10 text-center sm:pt-20">
+      <section className="halo mx-auto max-w-3xl px-4 pt-10 pb-10 text-center sm:pt-20">
         <Logo className="rise mx-auto h-14 w-auto sm:h-24" />
         <p className="rise eyebrow mt-4 sm:mt-6">Ton lycée, ta fac. Ta voix.</p>
         <h1 className="rise rise-2 font-display mt-3 text-[2.25rem] min-[400px]:text-[2.5rem] leading-[1.06] font-bold sm:text-[4.5rem] sm:leading-[1.04]">
@@ -30,7 +30,7 @@ export default async function Home() {
         <p className="rise rise-3 mx-auto mt-5 max-w-xl text-[1.1875rem] leading-relaxed text-muted sm:text-[1.3125rem]">
           Signale ce qui ne fonctionne pas, découvre les priorités de ton établissement et fais entendre ta voix.
         </p>
-        <div id="solidarite" data-testid="solidarite" className="rise rise-3 mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-[1.5rem] bg-card px-5 py-4">
+        <div id="solidarite" data-testid="solidarite" className="rise rise-3 mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-2xl border border-line bg-card px-5 py-4">
           <span className="text-sm text-muted">Pas élève ni étudiant&nbsp;? Soutiens la cause&nbsp;:</span>
           <SolidarityButton done={solidary} total={solidary ? Math.max(solidaires, 1) : solidaires} />
         </div>
@@ -43,36 +43,18 @@ export default async function Home() {
         </div>
       </section>
 
-      <section aria-label="Chiffres en direct" className="mx-auto max-w-5xl px-4">
-        {stats && stats.participations > 0 ? (
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              [fmt(stats.participations), stats.participations > 1 ? "participations comptabilisées" : "participation comptabilisée"],
-              [fmt(stats.schools), stats.schools > 1 ? "établissements concernés" : "établissement concerné"],
-              [fmt(stats.moderated), stats.moderated > 1 ? "témoignages relus et publiés" : "témoignage relu et publié"],
-            ].map(([n, l]) => (
-              <div key={l} className="card px-3 py-6 text-center sm:py-8">
-                <p className="font-display text-3xl font-semibold tabular-nums sm:text-5xl">{n}</p>
-                <p className="mt-1.5 text-xs leading-snug text-muted sm:text-sm">{l}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="card px-6 py-8 text-center">
-            <p className="font-display text-2xl font-semibold">Les premiers résultats s&apos;afficheront ici.</p>
-            <p className="mt-2 text-sm text-muted">
-              {stats ? `${fmt(stats.totalSchools)} lycées et ${fmt(stats.totalUniversities)} universités et écoles référencés. ` : ""}Les chiffres viennent uniquement des participations réelles.
-            </p>
-          </div>
-        )}
-        <p className="mt-3 text-center text-xs text-muted">
-          Chiffres en direct. Une participation n&apos;est pas une personne vérifiée.{" "}
-          <Link href="/a-propos#limites" className="link">Nos limites</Link>
-        </p>
+      <section className="mx-auto max-w-5xl px-4">
+        <Link href="/tableau" className="card flex items-center justify-between gap-4 px-6 py-5">
+          <span>
+            <span className="block font-semibold">Les chiffres en direct</span>
+            <span className="mt-0.5 block text-sm text-muted">Participations, établissements et problèmes cités, sur le tableau national.</span>
+          </span>
+          <span aria-hidden className="text-2xl text-signal">→</span>
+        </Link>
       </section>
 
       <section className="mx-auto mt-24 max-w-5xl px-4">
-        <h2 className="font-display text-center text-3xl font-bold sm:text-5xl">Comment ça marche.</h2>
+        <h2 className="font-display text-center text-3xl font-bold sm:text-5xl">Comment ça marche</h2>
         <ol className="mt-10 grid gap-3 sm:grid-cols-3">
           {[
             ["Trouve ton établissement.", "Par son nom, sa ville ou son code postal. Lycées, universités et grandes écoles : tous sont référencés."],
@@ -89,7 +71,7 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto mt-24 max-w-5xl px-4">
-        <h2 className="font-display text-center text-3xl font-bold sm:text-5xl">Ce que tu peux signaler.</h2>
+        <h2 className="font-display text-center text-3xl font-bold sm:text-5xl">Ce que tu peux signaler</h2>
         <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {CATEGORIES.map((c) => (
             <li key={c.key} className="card flex flex-col gap-3 p-5 last:col-span-2 sm:last:col-span-1">
@@ -101,7 +83,7 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto mt-24 max-w-5xl px-4">
-        <div className="rounded-[1.75rem] bg-black px-7 py-12 text-center text-white sm:px-14 sm:py-16">
+        <div className="rounded-2xl bg-ink px-7 py-12 text-center text-white sm:px-14 sm:py-16">
           <h2 className="font-display text-3xl font-bold sm:text-5xl">Anonyme. Modéré.<br />Indépendant.</h2>
           <ul className="mx-auto mt-10 grid max-w-4xl gap-8 text-left sm:grid-cols-3">
             <li>

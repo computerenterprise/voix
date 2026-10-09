@@ -17,7 +17,7 @@ test("accueil : message clair, aucun chiffre inventé", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Et si ton lycée ou ta fac pouvait enfin");
   await expect(page.getByText("Signale ce qui ne fonctionne pas")).toBeVisible();
   await expect(page.getByRole("link", { name: "Trouver mon établissement" })).toBeVisible();
-  await expect(page.getByText("Les premiers résultats s'afficheront ici.")).toBeVisible();
+  await expect(page.getByRole("link", { name: /Les chiffres en direct/ })).toHaveAttribute("href", "/tableau");
 });
 
 test("recherche : autocomplétion, homonymes, fautes de frappe, code postal", async ({ page }) => {

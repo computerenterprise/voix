@@ -23,6 +23,7 @@ export const RETENTION = [
   ["Participations (problèmes soutenus)", "12 mois après la participation, puis suppression"],
   ["Soutiens « Je suis solidaire »", "12 mois, puis suppression"],
   ["Empreinte d'IP du jour (anti-abus)", "Effacée au bout de 30 jours"],
+  ["Empreinte d'IP de l'auteur d'un message écrit", "12 mois (obligation légale, décret n° 2021-1362)"],
   ["Messages écrits refusés", "Supprimés 30 jours après la décision"],
   ["Messages écrits publiés ou en attente", "12 mois, ou jusqu'à suppression demandée"],
   ["Cookie technique d'appareil", "12 mois"],

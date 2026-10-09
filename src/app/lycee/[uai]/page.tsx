@@ -49,7 +49,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
   return (
     <div className="mx-auto max-w-3xl px-4 pt-8 sm:pt-12">
       {merci && (
-        <div role="status" className="rise mb-8 rounded-[1.75rem] bg-black p-7 text-center text-white sm:p-10">
+        <div role="status" className="rise mb-8 rounded-2xl bg-black p-7 text-center text-white sm:p-10">
           <div aria-hidden className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-signal">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10"/></svg>
           </div>
@@ -94,7 +94,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
       </div>
 
       {results.board.votes > 0 && (
-        <section className="mt-12 rounded-[1.75rem] bg-black p-6 text-white sm:p-8" aria-labelledby="etat">
+        <section className="mt-12 rounded-2xl bg-black p-6 text-white sm:p-8" aria-labelledby="etat">
           <p className="text-sm font-medium text-[#7ee0a1]">Voix confirmées par un mot de passe commun</p>
           <h2 id="etat" className="font-display mt-1 text-2xl font-bold sm:text-3xl">
             L&apos;état {w.ofThe} selon {results.board.votes.toLocaleString("fr-FR")} {w.people}

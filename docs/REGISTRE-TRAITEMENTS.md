@@ -19,7 +19,8 @@ données, région UE Paris). Accepter leurs contrats de sous-traitance (DPA) dan
 - **Finalité** : témoignages relus avant publication anonyme.
 - **Base légale** : intérêt légitime.
 - **Données** : texte libre (filtré : e-mails, téléphones, liens, adresses bloqués), catégorie, date.
-- **Durée** : 12 mois ; refusés supprimés 30 jours après la décision.
+- **Durée** : 12 mois ; refusés supprimés 30 jours après la décision. Empreinte de connexion de l'auteur gardée
+  12 mois (décret n° 2021-1362), communiquée uniquement sur réquisition judiciaire.
 - **Mesure** : jamais publiés sans relecture humaine.
 
 ## 3. « Je suis solidaire »
@@ -42,8 +43,7 @@ paramétrées, preuve de travail anti-robot, limitation de débit, mot de passe 
 authentification admin (TOTP), cookies `httpOnly` et `SameSite=Strict`, aucun secret dans le code public.
 
 ## Points ouverts
-- **Conservation LCEN** : le décret n° 2021-1362 impose aux hébergeurs de conserver certaines données d'identification
-  des auteurs de contenus pendant un an. VOIX efface l'empreinte de connexion à 30 jours pour protéger les mineurs.
-  À faire valider par un juriste.
+- **Conservation LCEN** (décidé le 9 octobre 2026) : l'empreinte de connexion des auteurs de messages écrits est gardée
+  un an, comme le demande le décret n° 2021-1362 ; celle des simples votes reste effacée à 30 jours.
 - **Analyse d'impact (AIPD)** : public mineur et données à caractère politique possibles ; une AIPD simplifiée est
   recommandée si l'audience devient importante.
