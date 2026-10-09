@@ -20,11 +20,11 @@ function loadFonts() {
 
 import { LogoShapes, LOGO_WIDTH } from "@/components/Logo";
 
-const INK = "#1d1d1f";
-const PAPER = "#ffffff";
-const SIGNAL = "#0071e3";
-const MUTED = "#6e6e73";
-const TRACK = "#e8e8ed";
+const INK = "#121215";
+const PAPER = "#fbfaf7";
+const SIGNAL = "#2852f0";
+const MUTED = "#6a6870";
+const TRACK = "#e9e6df";
 
 function LogoMark({ size }: { size: number }) {
   // Même dessin que le logo du site (src/components/Logo.tsx) : hauteur des capitales = size * 0.72.

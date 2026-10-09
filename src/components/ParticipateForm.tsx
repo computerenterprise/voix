@@ -69,7 +69,7 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
             return (
               <label
                 key={c.key}
-                className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3.5 ring-2 transition-all ${on ? "bg-[#e8f2ff] ring-signal" : "bg-card ring-transparent hover:bg-paper-2"}`}
+                className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3.5 ring-2 transition-all ${on ? "bg-signal-tint ring-signal" : "bg-card ring-transparent hover:bg-paper-2"}`}
               >
                 <input type="checkbox" className="sr-only" checked={on} onChange={() => toggle(c.key)} />
                 <span aria-hidden className="text-xl">{c.emoji}</span>
@@ -151,7 +151,7 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
 
       {error && <p role="alert" className="mt-6 rounded-2xl bg-signal-soft p-4 text-sm font-medium text-signal-ink">{error}</p>}
 
-      <div className="sticky bottom-0 -mx-4 mt-8 border-t border-black/5 bg-white/80 px-4 py-4 backdrop-blur-xl">
+      <div className="sticky bottom-0 -mx-4 mt-8 border-t border-black/5 bg-[rgb(251_250_247/0.85)] px-4 py-4 backdrop-blur-xl">
         <button type="submit" disabled={!canSend || sending} className="btn btn-primary w-full">
           {sending ? "Envoi…" : cats.length ? `Envoyer (${cats.length})` : "Choisis au moins une préoccupation"}
         </button>

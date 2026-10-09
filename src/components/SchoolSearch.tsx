@@ -121,7 +121,7 @@ export function SchoolSearch({ autoFocus = false, size = "lg" }: { autoFocus?: b
                   >
                     <p className="font-medium leading-tight">
                       {(r.kind === "universite" || r.kind === "ecole") && (
-                        <span className="chip mr-1.5 bg-[#e8f2ff] align-[2px] text-signal">{r.kind === "ecole" ? "École" : "Université"}</span>
+                        <span className="chip mr-1.5 bg-signal-tint align-[2px] text-signal">{r.kind === "ecole" ? "École" : "Université"}</span>
                       )}
                       {r.name}
                     </p>

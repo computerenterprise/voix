@@ -109,8 +109,8 @@ export function AbuseForm({ initialUrl }: { initialUrl: string }) {
         <legend className="text-sm font-semibold">Motif</legend>
         <div className="mt-2 grid gap-2">
           {REASONS.map(([k, l]) => (
-            <label key={k} className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 ring-2 ${reason === k ? "bg-[#e8f2ff] ring-signal" : "bg-card ring-transparent"}`}>
-              <input type="radio" name="reason" value={k} checked={reason === k} onChange={() => setReason(k)} className="accent-[#0071e3]" />
+            <label key={k} className={`flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 ring-2 ${reason === k ? "bg-signal-tint ring-signal" : "bg-card ring-transparent"}`}>
+              <input type="radio" name="reason" value={k} checked={reason === k} onChange={() => setReason(k)} className="accent-[#2852f0]" />
               <span className="font-medium">{l}</span>
             </label>
           ))}
