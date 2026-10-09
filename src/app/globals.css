@@ -85,7 +85,7 @@ body {
 }
 .btn:active { transform: scale(0.98); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-.btn-primary { background: var(--signal); color: #fff; }
+.btn-primary { background: var(--signal); color: #fff; box-shadow: 0 8px 22px -10px rgb(0 113 227 / 0.65); }
 .btn-primary:hover { background: var(--signal-hover); }
 .btn-dark { background: var(--ink); color: #fff; }
 .btn-dark:hover { background: #333336; }
@@ -95,7 +95,21 @@ body {
 
 .card {
   background: var(--card);
-  border-radius: 1.375rem;
+  border-radius: 1.5rem;
+  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.35s ease;
+}
+a.card:hover, .card:has(> a:only-child):hover { transform: translateY(-2px); box-shadow: 0 12px 30px -18px rgb(0 40 100 / 0.35); }
+
+/* Halo bleu très doux derrière les en-têtes : la touche apaisante de VOIX, reprise sur la fiche */
+.halo { position: relative; isolation: isolate; }
+.halo::before {
+  content: "";
+  position: absolute;
+  inset: -4rem 0 auto;
+  height: 34rem;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(farthest-side at 50% 0%, rgb(0 113 227 / 0.14), rgb(0 113 227 / 0));
 }
 
 .chip {

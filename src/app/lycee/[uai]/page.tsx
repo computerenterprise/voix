@@ -66,7 +66,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
         </div>
       )}
 
-      <div className="text-center">
+      <div className="halo text-center">
         <p className="rise text-sm text-muted">
           {school.kind !== "lycee" && `${w.label} · `}
           {school.city}
