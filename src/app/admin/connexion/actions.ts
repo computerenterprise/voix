@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { checkAdminPassword, createAdminSession, audit, destroyAdminSession } from "@/lib/admin-auth";
+import { checkAdminPassword, checkAdminTotp, createAdminSession, audit, destroyAdminSession } from "@/lib/admin-auth";
 import { rateLimit } from "@/lib/ratelimit";
 import { clientIp } from "@/lib/request";
 import { ipHash } from "@/lib/security";
@@ -14,6 +14,10 @@ export async function login(_prev: { error: string } | null, form: FormData): Pr
   if (!checkAdminPassword(password)) {
     await audit("login_failed");
     return { error: "Mot de passe incorrect." };
+  }
+  if (!checkAdminTotp(String(form.get("code") ?? ""))) {
+    await audit("login_failed_2fa");
+    return { error: "Code de double authentification incorrect ou expiré." };
   }
   await createAdminSession();
   await audit("login");

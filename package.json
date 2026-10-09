@@ -13,7 +13,8 @@
     "admin:hash": "tsx scripts/hash-password.ts",
     "test": "node --import tsx --test tests/unit/*.test.ts",
     "test:e2e": "playwright test",
-    "vercel-build": "npm run db:migrate && npm run db:import -- data/annuaire-lycees.csv && npm run db:import-universites -- data/esr-principaux-etablissements.csv && next build"
+    "vercel-build": "npm run db:migrate && npm run db:import -- data/annuaire-lycees.csv && npm run db:import-universites -- data/esr-principaux-etablissements.csv && next build",
+    "admin:totp": "tsx scripts/totp-secret.ts"
   },
   "dependencies": {
     "next": "16.4.0",

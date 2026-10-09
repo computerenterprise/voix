@@ -11,7 +11,7 @@ export default function Charte() {
 
       <h2>Ce qui est publié</h2>
       <p>
-        Les problèmes soutenus (cases cochées) sont comptées immédiatement. Les messages écrits ne sont{" "}
+        Les problèmes soutenus (cases cochées) sont comptés immédiatement. Les messages écrits ne sont{" "}
         <strong>jamais publiés automatiquement</strong> : ils restent privés jusqu&apos;à leur relecture par l&apos;équipe
         VOIX, qui peut les publier de façon anonyme ou les refuser.
       </p>
@@ -42,11 +42,27 @@ export default function Charte() {
         examiné ; un contenu manifestement illicite est retiré sans délai.
       </p>
 
+      <h2>Participations abusives</h2>
+      <p>
+        Les participations envoyées en série depuis une même connexion sont mises en vérification et ne sont pas comptées
+        tant que l&apos;équipe ne les a pas validées. Les participations manifestement automatisées ou frauduleuses sont
+        suspendues et retirées des résultats.
+      </p>
+
+      <h2>Contenus illicites et autorités</h2>
+      <p>
+        Un contenu manifestement illicite est retiré dès que nous en avons connaissance. Si un contenu laisse craindre une
+        infraction menaçant la vie ou la sécurité d&apos;une personne, nous en informons les autorités compétentes. Les
+        autorités peuvent nous écrire à l&apos;adresse de contact indiquée dans les <Link href="/mentions-legales">mentions
+        légales</Link>, qui est notre point de contact unique, en français.
+      </p>
+
       <h2>Contestation</h2>
       <p>
         Les messages étant anonymes, nous ne pouvons pas notifier individuellement leur auteur d&apos;un refus. Les
-        motifs de refus possibles sont ceux listés ci-dessus. Pour toute question, utilise la page{" "}
-        <Link href="/mentions-legales">Mentions légales</Link> (contact).
+        motifs de refus possibles sont ceux listés ci-dessus. Pour contester une décision (refus, retrait, participation
+        suspendue), écris à l&apos;adresse de contact des <Link href="/mentions-legales">mentions légales</Link> :
+        la décision est réexaminée et nous te répondons. Tu peux aussi saisir la justice.
       </p>
     </article>
   );

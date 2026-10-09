@@ -14,7 +14,7 @@ export const LEGAL = {
   privacyEmail: env("LEGAL_PRIVACY_EMAIL") ?? env("LEGAL_CONTACT_EMAIL"), // droits RGPD (par défaut : contact général)
   hostName: "Vercel Inc.",
   hostAddress: "440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis",
-  hostPhone: env("LEGAL_HOST_PHONE"), // numéro publié par Vercel (exigé par la loi pour la confiance dans l'économie numérique)
+  hostPhone: env("LEGAL_HOST_PHONE") ?? "+1 559 288 7060", // numéro de Vercel repris dans les mentions légales publiées (LCEN) ; à revérifier sur vercel.com
   databaseHost: "Supabase Inc.",
   lastUpdated: "9 octobre 2026",
 };

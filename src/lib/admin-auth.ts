@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { hmac, safeEqual, verifyPassword } from "./security";
 import { sql } from "./db";
+import { verifyTotp } from "./totp";
 
 export const ADMIN_COOKIE = "voix_admin";
 const SESSION_HOURS = 8;
@@ -21,10 +22,20 @@ export function checkAdminPassword(password: string): boolean {
   }
 }
 
+/** Double authentification : active dès que ADMIN_TOTP_SECRET est défini (variable Vercel). */
+export const totpEnabled = () => !!process.env.ADMIN_TOTP_SECRET?.trim();
+
+export function checkAdminTotp(code: string): boolean {
+  const secret = process.env.ADMIN_TOTP_SECRET?.trim();
+  return !secret || verifyTotp(secret, code);
+}
+
+// Changer le mot de passe ou la clé de double authentification invalide toutes les sessions.
+const credentialsFingerprint = () => hmac(`${process.env.ADMIN_PASSWORD_HASH ?? ""}|${process.env.ADMIN_TOTP_SECRET?.trim() ?? ""}`, "pw").slice(0, 16);
+
 export async function createAdminSession() {
   const exp = Date.now() + SESSION_HOURS * 3600_000;
-  // L'empreinte du mot de passe est incluse : changer le mot de passe invalide toutes les sessions.
-  const payload = `${exp}.${hmac(process.env.ADMIN_PASSWORD_HASH ?? "", "pw").slice(0, 16)}`;
+  const payload = `${exp}.${credentialsFingerprint()}`;
   (await cookies()).set(ADMIN_COOKIE, `${payload}.${sign(payload)}`, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -42,7 +53,7 @@ export async function isAdmin(): Promise<boolean> {
   const [exp, pw, sig] = parts;
   const payload = `${exp}.${pw}`;
   if (!safeEqual(sig, sign(payload))) return false;
-  if (!safeEqual(pw, hmac(process.env.ADMIN_PASSWORD_HASH ?? "", "pw").slice(0, 16))) return false;
+  if (!safeEqual(pw, credentialsFingerprint())) return false;
   return Number(exp) > Date.now();
 }
 
