@@ -300,7 +300,7 @@ test("partage : lien unique, Open Graph et images", async ({ page, request }) =>
 
 test("tableau national et pages légales", async ({ page }) => {
   await page.goto("/tableau");
-  await expect(page.getByRole("heading", { name: "Préoccupations citées" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Problèmes cités" })).toBeVisible();
   await expect(page.getByText("Pas de classement des établissements", { exact: false })).toBeVisible();
   for (const p of ["/a-propos", "/confidentialite", "/mentions-legales", "/charte"]) {
     const r = await page.goto(p);

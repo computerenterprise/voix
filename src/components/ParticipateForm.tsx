@@ -61,7 +61,7 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
   return (
     <form onSubmit={submit} className="mt-8" noValidate>
       <fieldset>
-        <legend className="text-sm font-medium text-muted">Préoccupations</legend>
+        <legend className="text-sm font-medium text-muted">Problèmes</legend>
         <div className="mt-3 grid gap-2">
           {CATEGORIES.map((c) => {
             const on = selected.includes(c.key);
@@ -153,7 +153,7 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
 
       <div className="sticky bottom-0 -mx-4 mt-8 border-t border-black/5 bg-[rgb(251_250_247/0.85)] px-4 py-4 backdrop-blur-xl">
         <button type="submit" disabled={!canSend || sending} className="btn btn-primary w-full">
-          {sending ? "Envoi…" : cats.length ? `Envoyer (${cats.length})` : "Choisis au moins une préoccupation"}
+          {sending ? "Envoi…" : cats.length ? `Envoyer (${cats.length})` : "Choisis au moins un problème"}
         </button>
         <p className="mt-2 text-center text-xs text-muted">
           Un seul décompte par navigateur et par établissement. <Link href="/confidentialite" className="link">Ce que nous enregistrons</Link>

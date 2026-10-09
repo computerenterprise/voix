@@ -76,7 +76,7 @@ export default async function Home() {
         <ol className="mt-10 grid gap-3 sm:grid-cols-3">
           {[
             ["Trouve ton établissement.", "Par son nom, sa ville ou son code postal. Lycées, universités et grandes écoles : tous sont référencés."],
-            ["Dis ce qui coince.", "Soutiens une préoccupation existante ou ajoute la tienne. Aucun nom, aucun compte."],
+            ["Dis ce qui coince.", "Soutiens un problème existant ou ajoute le tien. Aucun nom, aucun compte."],
             ["Partage la page.", "Plus il y a de participations, plus les priorités de ton établissement sont lisibles."],
           ].map(([t, d], i) => (
             <li key={t} className="card p-7">

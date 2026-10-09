@@ -112,7 +112,7 @@ export function AreaExplorer({ areas, kind }: { areas: Area[]; kind: "départeme
             <tr>
               <th scope="col" className="py-2 pr-3 font-semibold">{kind === "département" ? "Département" : "Ville"}</th>
               <th scope="col" className="py-2 pr-3 font-semibold">Participations</th>
-              <th scope="col" className="py-2 font-semibold">Préoccupations les plus citées</th>
+              <th scope="col" className="py-2 font-semibold">Problèmes les plus cités</th>
             </tr>
           </thead>
           <tbody>

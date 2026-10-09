@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: "VOIX — Ton lycée, ta fac. Ta voix.", template: "%s · VOIX" },
   description:
-    "Signale ce qui ne fonctionne pas dans ton lycée ou ton université, soutiens les préoccupations des autres et découvre les priorités de ton établissement. Plateforme indépendante.",
+    "Signale ce qui ne fonctionne pas dans ton lycée ou ton université, soutiens les problèmes signalés par les autres et découvre les priorités de ton établissement. Plateforme indépendante.",
   openGraph: { siteName: "VOIX", locale: "fr_FR", type: "website" },
   twitter: { card: "summary_large_image" },
 };

@@ -53,7 +53,7 @@ export default async function AdminStats() {
           </table>
         </section>
         <section className="card p-5">
-          <h2 className="font-bold">Préoccupations (national)</h2>
+          <h2 className="font-bold">Problèmes (national)</h2>
           <table className="mt-3 w-full text-sm">
             <tbody>
               {cats.map((c) => <tr key={c.key} className="border-t border-line"><td className="py-2">{categoryLabel(c.key)}</td><td className="py-2 text-right tabular-nums">{c.n}</td></tr>)}

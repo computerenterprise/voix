@@ -19,13 +19,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!school || school.hidden) return { title: "Établissement introuvable" };
   const title = `${school.name} (${school.city})`;
   const w = words(school.kind);
-  const description = `Voici les préoccupations exprimées par ${w.peopleOf(school.name)}. Fais entendre ${w.your} sur VOIX.`;
+  const description = `Voici les problèmes signalés par ${w.peopleOf(school.name)}. Fais entendre ${w.your} sur VOIX.`;
   const image = `/lycee/${school.uai}/og`;
   return {
     title,
     description,
     alternates: { canonical: `/lycee/${school.uai}` },
-    openGraph: { title: `${school.name} · VOIX`, description, url: `/lycee/${school.uai}`, images: [{ url: image, width: 1200, height: 630, alt: `Préoccupations exprimées au ${school.name}` }] },
+    openGraph: { title: `${school.name} · VOIX`, description, url: `/lycee/${school.uai}`, images: [{ url: image, width: 1200, height: 630, alt: `Problèmes signalés au ${school.name}` }] },
     twitter: { card: "summary_large_image", title: `${school.name} · VOIX`, description, images: [image] },
   };
 }
@@ -123,17 +123,17 @@ export default async function SchoolPage({ params, searchParams }: Props) {
       )}
 
       <section className="mt-16" aria-labelledby="prio">
-        <h2 id="prio" className="font-display text-3xl font-bold">Préoccupations signalées.</h2>
+        <h2 id="prio" className="font-display text-3xl font-bold">Problèmes signalés.</h2>
         {results.total === 0 ? (
           <p className="mt-2 text-muted">
-            Personne n&apos;a encore participé pour {w.the}. Sois la première voix : soutiens une préoccupation ci-dessous.
+            Personne n&apos;a encore participé pour {w.the}. Sois la première voix : soutiens un problème ci-dessous.
           </p>
         ) : !showPercent ? (
           <p className="mt-2 text-sm text-muted">
             Les pourcentages s&apos;affichent à partir de {MIN_FOR_PERCENT} participations. En attendant, voici le nombre de soutiens.
           </p>
         ) : (
-          <p className="mt-2 text-sm text-muted">Part des participations qui citent chaque préoccupation (plusieurs choix possibles).</p>
+          <p className="mt-2 text-sm text-muted">Part des participations qui citent chaque problème (plusieurs choix possibles).</p>
         )}
 
         <ul className="mt-6 grid gap-3">

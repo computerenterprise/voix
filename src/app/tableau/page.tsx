@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getDashboard } from "@/lib/schools";
 import { categoryLabel, CATEGORIES, MIN_FOR_CITY, MIN_FOR_DEPARTMENT } from "@/lib/categories";
+import { solidarityTotal } from "@/lib/solidarity";
 import { AreaExplorer, DailyChart, HBarChart } from "@/components/Charts";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Tableau national",
-  description: "Les préoccupations exprimées par les lycéens et les étudiants sur VOIX, agrégées par département et par ville.",
+  description: "Les problèmes signalés par les lycéens et les étudiants sur VOIX, agrégés par ville.",
 };
 
 export default async function Dashboard() {
-  const d = await getDashboard(MIN_FOR_DEPARTMENT, MIN_FOR_CITY);
+  const [d, solidaires] = await Promise.all([getDashboard(MIN_FOR_DEPARTMENT, MIN_FOR_CITY), solidarityTotal().catch(() => 0)]);
   const short = (k: string) => CATEGORIES.find((c) => c.key === k)?.short ?? categoryLabel(k);
 
   return (
@@ -22,15 +23,17 @@ export default async function Dashboard() {
         n&apos;est pas « pire » qu&apos;un autre, il est simplement plus mobilisé sur VOIX.
       </p>
 
-      <div className="mt-8 grid grid-cols-2 gap-3">
-        <div className="card p-5">
-          <p className="font-display text-4xl font-bold">{d.total.toLocaleString("fr-FR")}</p>
-          <p className="text-sm text-muted">{d.total > 1 ? "participations comptabilisées" : "participation comptabilisée"}</p>
-        </div>
-        <div className="card p-5">
-          <p className="font-display text-4xl font-bold">{d.schools.toLocaleString("fr-FR")}</p>
-          <p className="text-sm text-muted">{d.schools > 1 ? "établissements avec au moins une participation" : "établissement avec au moins une participation"}</p>
-        </div>
+      <div className="mt-8 grid grid-cols-3 gap-2 sm:gap-3">
+        {[
+          [d.total, d.total > 1 ? "participations" : "participation"],
+          [d.schools, d.schools > 1 ? "établissements" : "établissement"],
+          [solidaires, solidaires > 1 ? "personnes solidaires" : "personne solidaire"],
+        ].map(([n, l]) => (
+          <div key={l as string} className="card px-3 py-5 text-center sm:p-6">
+            <p className="font-display text-3xl font-bold tabular-nums sm:text-5xl">{(n as number).toLocaleString("fr-FR")}</p>
+            <p className="mt-1 text-xs leading-snug text-muted sm:text-sm">{l}</p>
+          </div>
+        ))}
       </div>
 
       {d.total === 0 ? (
@@ -39,34 +42,19 @@ export default async function Dashboard() {
           <Link href="/recherche" className="link">Trouver mon établissement</Link>
         </p>
       ) : (
-        <div className="mt-6 grid gap-4 lg:grid-cols-5">
-          <section className="card p-5 sm:p-6 lg:col-span-3" aria-labelledby="nat">
-            <h2 id="nat" className="font-display text-2xl font-bold">Préoccupations citées</h2>
+        <div className="mt-6 grid gap-4">
+          <section className="card p-5 sm:p-6" aria-labelledby="nat">
+            <h2 id="nat" className="font-display text-2xl font-bold">Problèmes cités</h2>
             <p className="mb-5 mt-1 text-sm text-muted">Part des participations qui citent chaque point (plusieurs choix possibles).</p>
             <HBarChart data={d.national.map((n) => ({ label: categoryLabel(n.key), value: n.supports, percent: n.percent }))} />
           </section>
-          <section className="card p-5 sm:p-6 lg:col-span-2" aria-labelledby="day">
+          <section className="card p-5 sm:p-6" aria-labelledby="day">
             <h2 id="day" className="font-display text-2xl font-bold">Participations par jour</h2>
             <p className="mb-5 mt-1 text-sm text-muted">30 derniers jours.</p>
             <DailyChart data={d.daily} />
           </section>
         </div>
       )}
-
-      <section className="mt-10" aria-labelledby="dep">
-        <h2 id="dep" className="font-display text-3xl font-bold">Par département</h2>
-        <p className="mt-1 text-sm text-muted">Affiché à partir de {MIN_FOR_DEPARTMENT} participations dans le département.</p>
-        <div className="card mt-4 p-5">
-          {d.departments.length ? (
-            <AreaExplorer
-              kind="département"
-              areas={d.departments.map((a) => ({ id: a.code, name: `${a.name} (${a.code})`, total: a.total, schools: a.schools, top: a.top.map((t) => ({ label: short(t.key), percent: t.percent })) }))}
-            />
-          ) : (
-            <p className="text-ink-2">Pas encore assez de participations pour afficher un département.</p>
-          )}
-        </div>
-      </section>
 
       <section className="mt-10" aria-labelledby="vil">
         <h2 id="vil" className="font-display text-3xl font-bold">Par ville</h2>

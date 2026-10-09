@@ -28,7 +28,7 @@ export default function Privacy() {
 
       <h2>Ce que nous enregistrons</h2>
       <ul>
-        <li><strong>Ta participation</strong> : le lycée choisi, les préoccupations cochées, la date.</li>
+        <li><strong>Ta participation</strong> : le lycée choisi, les problèmes cochés, la date.</li>
         <li><strong>Ton message écrit</strong>, si tu en rédiges un. Il est relu avant toute publication. N&apos;y mets aucune information personnelle.</li>
         <li>
           <strong>Un cookie technique d&apos;appareil</strong> (« voix_d ») : un nombre aléatoire, qui ne contient rien sur toi.
@@ -53,7 +53,7 @@ export default function Privacy() {
 
       <h2>Pourquoi, et sur quelle base</h2>
       <p>
-        Afficher des préoccupations agrégées par établissement, prévenir la fraude et modérer les contenus. Base légale
+        Afficher des problèmes agrégés par établissement, prévenir la fraude et modérer les contenus. Base légale
         envisagée : l&apos;intérêt légitime de l&apos;éditeur à faire fonctionner une plateforme civique fiable
         (article 6.1.f du RGPD), avec des mesures renforcées parce que le public comprend des mineurs : aucune donnée
         d&apos;identité, minimisation, durées courtes, effacement en un clic.

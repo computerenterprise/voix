@@ -11,7 +11,7 @@ export default function Charte() {
 
       <h2>Ce qui est publié</h2>
       <p>
-        Les préoccupations soutenues (cases cochées) sont comptées immédiatement. Les messages écrits ne sont{" "}
+        Les problèmes soutenus (cases cochées) sont comptées immédiatement. Les messages écrits ne sont{" "}
         <strong>jamais publiés automatiquement</strong> : ils restent privés jusqu&apos;à leur relecture par l&apos;équipe
         VOIX, qui peut les publier de façon anonyme ou les refuser.
       </p>

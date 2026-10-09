@@ -76,7 +76,7 @@ export async function renderShareImage(uaiRaw: string, format: "og" | "story") {
           <span style={{ fontFamily: "Inter", fontWeight: 700, fontSize: nameSize, lineHeight: 1.05, color: INK, letterSpacing: -1.5 }}>{school.name}</span>
           <span style={{ fontSize: story ? 40 : 24, color: MUTED, marginTop: story ? 22 : 10, fontWeight: 500 }}>{school.city}</span>
           <span style={{ fontSize: story ? 50 : 26, color: INK, marginTop: story ? 60 : 14, fontWeight: 500 }}>
-            {r.total > 0 ? `« Voici les préoccupations exprimées dans ${words(school.kind).our}. »` : `« ${words(school.kind).our[0].toUpperCase()}${words(school.kind).our.slice(1)} peut enfin se faire entendre. »`}
+            {r.total > 0 ? `« Voici les problèmes signalés dans ${words(school.kind).our}. »` : `« ${words(school.kind).our[0].toUpperCase()}${words(school.kind).our.slice(1)} peut enfin se faire entendre. »`}
           </span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, marginTop: story ? 40 : 4 }}>
