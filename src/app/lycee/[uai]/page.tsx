@@ -11,7 +11,7 @@ import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ uai: string }>; searchParams: Promise<{ merci?: string; ecrit?: string; verif?: string }> };
+type Props = { params: Promise<{ uai: string }>; searchParams: Promise<{ merci?: string; ecrit?: string; verif?: string; code?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { uai } = await params;
@@ -35,7 +35,7 @@ const emoji = (k: string) => CATEGORIES.find((c) => c.key === k)?.emoji ?? "";
 export default async function SchoolPage({ params, searchParams }: Props) {
   const { uai: raw } = await params;
   const uai = raw.toUpperCase();
-  const { merci, ecrit, verif } = await searchParams;
+  const { merci, ecrit, verif, code } = await searchParams;
   const school = await getSchool(uai);
   if (!school || school.hidden) notFound();
   const w = words(school.kind);
@@ -56,6 +56,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
           <p className="font-display mt-4 text-3xl font-bold">{verif ? "Merci, ta voix est enregistrée." : "Merci, ta voix est comptée."}</p>
           <p className="mx-auto mt-2 max-w-md leading-relaxed text-white/70">
             {verif ? `Beaucoup de participations arrivent de la même connexion pour ${w.the} : la tienne sera comptée après une vérification anti-triche. ` : ""}
+            {code ? "Mot de passe reconnu : ta voix est confirmée. " : ""}
             {ecrit ? "Ton message sera relu par l'équipe avant toute publication. " : ""}
             Plus vous êtes nombreux, plus les priorités de {w.your} sont lisibles. Partage la page à ta classe.
           </p>
@@ -78,6 +79,9 @@ export default async function SchoolPage({ params, searchParams }: Props) {
         <div className="rise rise-3 mt-8">
           <p data-testid="total" className="font-display text-6xl font-semibold tabular-nums leading-none">{results.total.toLocaleString("fr-FR")}</p>
           <p className="mt-2 text-muted">participation{results.total > 1 ? "s" : ""} comptabilisée{results.total > 1 ? "s" : ""}</p>
+          {results.withCode > 0 && (
+            <p className="mt-1 text-sm font-medium text-ok">dont {results.withCode.toLocaleString("fr-FR")} confirmée{results.withCode > 1 ? "s" : ""} avec le mot de passe de l&apos;établissement</p>
+          )}
           {results.verifying > 0 && (
             <p className="mt-1 text-sm text-muted">+ {results.verifying.toLocaleString("fr-FR")} en cours de vérification</p>
           )}

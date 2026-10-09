@@ -5,6 +5,7 @@ import { z } from "zod";
 import { sql } from "@/lib/db";
 import { audit, isAdmin } from "@/lib/admin-auth";
 import { CATEGORY_KEYS } from "@/lib/categories";
+import { setSchoolCode } from "@/lib/school-code";
 
 async function guard() {
   if (!(await isAdmin())) throw new Error("Non autorisé");
@@ -97,6 +98,17 @@ export async function setConcernStatus(form: FormData) {
       on conflict (school_uai, category) do update set status = excluded.status, note = excluded.note, updated_at = now()`;
   await audit("concern_status", `school:${uai}`, `${category}=${status || "aucun"}`);
   revalidatePath("/admin", "layout");
+}
+
+/** Définit, change ou retire le mot de passe facultatif d'un établissement (seule l'empreinte est enregistrée). */
+export async function updateSchoolCode(form: FormData) {
+  await guard();
+  const uai = z.string().regex(/^\d{7}[A-Z]$/).parse(form.get("uai"));
+  const remove = form.get("remove") === "1";
+  const code = remove ? null : z.string().trim().min(5).max(120).parse(form.get("code"));
+  await setSchoolCode(uai, code);
+  await audit(remove ? "school_code_removed" : "school_code_set", `school:${uai}`);
+  revalidatePath("/admin/lycees");
 }
 
 export async function clearErrors() {

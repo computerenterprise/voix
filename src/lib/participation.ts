@@ -16,6 +16,7 @@ export const ParticipationInput = z.object({
     .nullable(),
   hp: z.string().max(200).optional(),        // champ piège invisible
   elapsed: z.number().int().min(0).max(86_400_000).optional(), // ms passées sur le formulaire
+  code: z.string().trim().max(120).optional(), // mot de passe facultatif de l'établissement
   pow: z.object({ c: z.string().max(200), n: z.string().regex(/^\d{1,12}$/) }).optional(), // preuve de travail
 });
 export type ParticipationInput = z.infer<typeof ParticipationInput>;
@@ -37,7 +38,7 @@ export type SubmitResult =
 
 export async function submitParticipation(
   input: ParticipationInput,
-  ctx: { deviceHash: string; ipHash: string; newDevice: boolean },
+  ctx: { deviceHash: string; ipHash: string; newDevice: boolean; withCode?: boolean },
 ): Promise<SubmitResult> {
   const [school] = await sql<{ uai: string }[]>`select uai from schools where uai = ${input.uai} and not hidden`;
   if (!school) return { ok: false, status: 404, error: "Établissement introuvable." };
@@ -77,7 +78,8 @@ export async function submitParticipation(
     suspend = true;
   } else if (sameIp >= IP_VERIFY_THRESHOLD) {
     flags.push(sameIp >= IP_FLAG_THRESHOLD ? "ip_partagee" : "connexion_multiple");
-    verify = true;
+    // Le mot de passe de l'établissement atteste l'appartenance (ex. wifi du lycée) : pas de mise en attente.
+    verify = !ctx.withCode;
   }
 
   const [{ n: recent }] = await sql<{ n: number }[]>`
@@ -86,11 +88,12 @@ export async function submitParticipation(
 
   return sql.begin(async (tx) => {
     const [p] = await tx<{ id: number; status: string }[]>`
-      insert into participations (school_uai, device_hash, ip_hash, categories, status, flags)
-      values (${input.uai}, ${ctx.deviceHash}, ${ctx.ipHash}, ${input.categories}, ${suspend ? "suspended" : verify ? "pending" : "counted"}, ${flags})
+      insert into participations (school_uai, device_hash, ip_hash, categories, status, flags, with_code)
+      values (${input.uai}, ${ctx.deviceHash}, ${ctx.ipHash}, ${input.categories}, ${suspend ? "suspended" : verify ? "pending" : "counted"}, ${flags}, ${!!ctx.withCode})
       on conflict (school_uai, device_hash) do update set
         categories = (select array_agg(distinct c order by c) from unnest(participations.categories || excluded.categories) c),
         flags = (select coalesce(array_agg(distinct f), '{}') from unnest(participations.flags || excluded.flags) f),
+        with_code = participations.with_code or excluded.with_code,
         status = case when participations.status in ('counted','pending') and excluded.status = 'suspended' then 'suspended' else participations.status end,
         updated_at = now()
       returning id, status`;

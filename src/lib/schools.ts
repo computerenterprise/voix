@@ -82,6 +82,8 @@ export type SchoolResults = {
   total: number;
   /** Participations enregistrées mais non comptées, en attente de vérification anti-abus. */
   verifying: number;
+  /** Participations comptées confirmées avec le mot de passe de l'établissement. */
+  withCode: number;
   categories: CategoryResult[];
   testimonies: { category: CategoryKey; body: string; created_at: string }[];
   pendingReports: number;
@@ -89,9 +91,10 @@ export type SchoolResults = {
 };
 
 async function computeSchoolResults(uai: string): Promise<SchoolResults> {
-  const [[{ total, verifying }], supports, reports, statuses, testimonies] = await Promise.all([
-    sql<{ total: number; verifying: number }[]>`
-      select count(*) filter (where status = 'counted')::int as total, count(*) filter (where status = 'pending')::int as verifying
+  const [[{ total, verifying, withCode }], supports, reports, statuses, testimonies] = await Promise.all([
+    sql<{ total: number; verifying: number; withCode: number }[]>`
+      select count(*) filter (where status = 'counted')::int as total, count(*) filter (where status = 'pending')::int as verifying,
+             count(*) filter (where status = 'counted' and with_code)::int as "withCode"
       from participations where school_uai = ${uai}`,
     sql<{ category: string; n: number }[]>`
       select c as category, count(*)::int as n
@@ -125,6 +128,7 @@ async function computeSchoolResults(uai: string): Promise<SchoolResults> {
   return {
     total,
     verifying,
+    withCode,
     categories,
     testimonies: testimonies.map((t) => ({ ...t, created_at: t.created_at.toISOString() })),
     pendingReports: reports.filter((r) => r.status === "pending").reduce((a, r) => a + r.n, 0),

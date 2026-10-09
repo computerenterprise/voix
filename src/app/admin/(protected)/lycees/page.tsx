@@ -1,7 +1,7 @@
 import { sql } from "@/lib/db";
 import { normalize } from "@/lib/normalize";
 import { CATEGORIES, CONCERN_STATUSES } from "@/lib/categories";
-import { toggleSchool, setConcernStatus } from "../actions";
+import { toggleSchool, setConcernStatus, updateSchoolCode } from "../actions";
 
 export default async function Schools({ searchParams }: { searchParams: Promise<{ q?: string; uai?: string }> }) {
   const { q = "", uai } = await searchParams;
@@ -12,6 +12,13 @@ export default async function Schools({ searchParams }: { searchParams: Promise<
     : [];
   const selected = uai
     ? (await sql<{ uai: string; name: string; city: string; hidden: boolean }[]>`select uai, name, city, hidden from schools where uai = ${uai}`)[0]
+    : null;
+  const code = selected
+    ? (await sql<{ version: number; updated_at: Date; total: number; with_code: number }[]>`
+        select c.version, c.updated_at,
+          (select count(*)::int from participations p where p.school_uai = ${selected.uai} and p.status = 'counted') as total,
+          (select count(*)::int from participations p where p.school_uai = ${selected.uai} and p.status = 'counted' and p.with_code) as with_code
+        from (select 1) x left join school_codes c on c.school_uai = ${selected.uai}`)[0]
     : null;
   const statuses = selected ? await sql<{ category: string; status: string; note: string | null }[]>`select category, status, note from concern_status where school_uai = ${selected.uai}` : [];
 
@@ -42,6 +49,29 @@ export default async function Schools({ searchParams }: { searchParams: Promise<
             <input type="hidden" name="hidden" value={selected.hidden ? "0" : "1"} />
             <button className="btn btn-ghost btn-sm">{selected.hidden ? "Réafficher le lycée" : "Masquer le lycée"}</button>
           </form>
+          <h4 className="mt-6 font-bold">Mot de passe de l&apos;établissement</h4>
+          <p className="text-xs text-muted">
+            Trois mots choisis par les élèves, que tu diffuses toi-même. Ils ne sont jamais enregistrés en clair : note-les
+            ailleurs. S&apos;ils fuitent, change-les ; les voix déjà confirmées le restent.
+          </p>
+          <p className="mt-2 text-sm">
+            {code?.version
+              ? <>Actif (version {code.version}, depuis le {code.updated_at.toLocaleDateString("fr-FR")}).</>
+              : <>Aucun mot de passe : le champ n&apos;apparaît pas sur le formulaire.</>}
+            {" "}Voix comptées : <strong>{code?.total ?? 0}</strong>, dont <strong>{code?.with_code ?? 0}</strong> avec le mot de passe.
+          </p>
+          <form action={updateSchoolCode} className="mt-2 flex gap-2">
+            <input type="hidden" name="uai" value={selected.uai} />
+            <input name="code" required minLength={5} maxLength={120} autoComplete="off" placeholder="ex. soleil cartable tempête" aria-label="Nouveau mot de passe" className="flex-1 rounded-full border border-line bg-white px-4 py-2 text-sm" />
+            <button className="btn btn-dark btn-sm">{code?.version ? "Changer" : "Définir"}</button>
+          </form>
+          {code?.version ? (
+            <form action={updateSchoolCode} className="mt-2">
+              <input type="hidden" name="uai" value={selected.uai} /><input type="hidden" name="remove" value="1" />
+              <button className="btn btn-ghost btn-sm">Retirer le mot de passe</button>
+            </form>
+          ) : null}
+
           <h4 className="mt-6 font-bold">État de traitement (public)</h4>
           <p className="text-xs text-muted">À renseigner uniquement quand une démarche réelle a été faite.</p>
           <div className="mt-2 grid gap-2">

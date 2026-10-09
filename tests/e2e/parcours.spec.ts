@@ -197,6 +197,44 @@ test("administration protégée et modération", async ({ page, request }) => {
   if (r.status() === 200) expect(await r.text()).not.toContain("toilettes");
 });
 
+test("mot de passe facultatif de l'établissement", async ({ page, browser }) => {
+  const OTHER = "9990003C";
+  // Sans mot de passe défini, le champ n'apparaît pas
+  await page.goto(`/lycee/${OTHER}/participer`);
+  await expect(page.getByLabel(/Mot de passe de ton établissement/)).toHaveCount(0);
+
+  await page.goto("/admin/connexion");
+  await page.getByLabel("Mot de passe").fill(ADMIN_PASSWORD);
+  await page.getByRole("button", { name: "Se connecter" }).click();
+  await expect(page).toHaveURL(/\/admin$/);
+  await page.goto(`/admin/lycees?q=curie&uai=${OTHER}`);
+  await page.getByLabel("Nouveau mot de passe").fill("Soleil cartable tempête");
+  await page.getByRole("button", { name: "Définir" }).click();
+  await expect(page.getByText(/Actif \(version 1/)).toBeVisible();
+  const sql = db();
+  const [c] = await sql`select code_hash from school_codes where school_uai = ${OTHER}`;
+  expect(c.code_hash).not.toContain("soleil"); // jamais en clair
+
+  const ctx = await browser.newContext({ locale: "fr-FR" });
+  const p = await ctx.newPage();
+  await p.goto(`/lycee/${OTHER}/participer`);
+  await p.getByText("État des bâtiments", { exact: true }).click();
+  await p.getByLabel(/Mot de passe de ton établissement/).fill("lune trousse orage");
+  await p.waitForTimeout(1600);
+  await p.getByRole("button", { name: /^Envoyer/ }).click();
+  await expect(p.locator("p[role=alert]")).toContainText("ne correspond pas");
+  // Majuscules, accents et espaces ne comptent pas
+  await p.getByLabel(/Mot de passe de ton établissement/).fill("  SOLEIL  cartable  tempete ");
+  await p.getByRole("button", { name: /^Envoyer/ }).click();
+  await expect(p).toHaveURL(/code=1/);
+  await expect(p.getByText("Mot de passe reconnu")).toBeVisible();
+  await expect(p.getByText(/dont 1 confirmée avec le mot de passe/)).toBeVisible();
+  const [r] = await sql`select with_code from participations where school_uai = ${OTHER}`;
+  expect(r.with_code).toBe(true);
+  await sql.end();
+  await ctx.close();
+});
+
 test("partage : lien unique, Open Graph et images", async ({ page, request }) => {
   await page.goto(`/lycee/${SCHOOL}`);
   const og = await page.locator('meta[property="og:image"]').getAttribute("content");

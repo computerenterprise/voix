@@ -6,7 +6,7 @@ import Link from "next/link";
 import { CATEGORIES, categoryLabel } from "@/lib/categories";
 import { consumeProof, prepareProof } from "@/lib/pow-client";
 
-export function ParticipateForm({ uai, already, kind }: { uai: string; already: string[]; kind?: string }) {
+export function ParticipateForm({ uai, already, kind, hasCode = false }: { uai: string; already: string[]; kind?: string; hasCode?: boolean }) {
   const router = useRouter();
   const startedAt = useRef(Date.now());
   const [selected, setSelected] = useState<string[]>([]);
@@ -14,6 +14,7 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
   const [textCat, setTextCat] = useState("");
   const [body, setBody] = useState("");
   const [hp, setHp] = useState("");
+  const [code, setCode] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
@@ -43,13 +44,14 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
           categories: cats,
           report: withText && body.trim() ? { category: reportCat, body: body.trim() } : null,
           hp,
+          code: code.trim() || undefined,
           elapsed: Date.now() - startedAt.current,
           pow,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erreur");
-      router.push(`/lycee/${uai}?merci=1${data.reportPending ? "&ecrit=1" : ""}${data.verifying ? "&verif=1" : ""}`);
+      router.push(`/lycee/${uai}?merci=1${data.reportPending ? "&ecrit=1" : ""}${data.verifying ? "&verif=1" : ""}${code.trim() ? "&code=1" : ""}`);
     } catch (err) {
       setError((err as Error).message || "Erreur réseau. Réessaie.");
       setSending(false);
@@ -81,6 +83,27 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
           })}
         </div>
       </fieldset>
+
+      {hasCode && (
+        <div className="mt-8">
+          <label htmlFor="code" className="text-sm font-medium text-muted">Mot de passe de ton établissement&nbsp;? Facultatif.</label>
+          <input
+            id="code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            maxLength={120}
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            placeholder="Ex. : trois mots partagés entre élèves"
+            className="mt-2 block w-full rounded-2xl bg-card px-4 py-3.5 text-[1.0625rem] outline-none ring-2 ring-transparent focus:bg-white focus:ring-signal"
+          />
+          <p className="mt-1.5 text-xs text-muted">
+            Il est commun à tout l&apos;établissement : il ne dit rien sur toi. Il permet seulement d&apos;afficher à part les
+            voix confirmées par des élèves. Sans mot de passe, ta voix compte aussi.
+          </p>
+        </div>
+      )}
 
       <div className="mt-8">
         <p className="text-sm font-medium text-muted">Un détail à ajouter&nbsp;? Facultatif.</p>

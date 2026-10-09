@@ -39,6 +39,11 @@ export default function Privacy() {
           <strong>Une empreinte de ton adresse IP</strong>, transformée de façon irréversible et différente chaque jour,
           uniquement pour détecter les abus (envois en masse). Ton adresse IP elle-même n&apos;est pas enregistrée.
         </li>
+        <li>
+          <strong>Si tu saisis le mot de passe de ton établissement</strong> (facultatif) : nous enregistrons seulement
+          qu&apos;il était correct (oui ou non). Ce mot de passe est commun à tout l&apos;établissement et ne permet pas
+          de t&apos;identifier ; nous ne le conservons pas en clair.
+        </li>
       </ul>
 
       <h2>Pourquoi, et sur quelle base</h2>

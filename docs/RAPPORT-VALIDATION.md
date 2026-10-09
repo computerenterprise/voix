@@ -67,3 +67,13 @@ Parcours couverts :
 - Écoles ajoutées (même fichier) : 169 écoles et grands établissements (ingénieurs, commerce, art, Sciences Po…) ;
   4 instituts situés à l'étranger écartés. Recherche vérifiée : « sciences po », « skema », « polytechnique ».
   Tests : 16/16 e2e.
+
+## Mot de passe facultatif par établissement (2026-10-09)
+
+- L'admin définit, change ou retire un mot de passe (trois mots) par établissement : seule une empreinte HMAC liée à
+  l'UAI est stockée. Le champ n'apparaît sur le formulaire que si un mot de passe existe.
+- Saisie tolérante (majuscules, accents, espaces). Mauvais mot de passe : message clair, vote non enregistré tant
+  qu'on ne corrige pas ou ne vide pas le champ. 10 essais par heure et par connexion.
+- Une voix confirmée n'est pas mise « en vérification » par la règle des connexions partagées (wifi du lycée).
+- Page publique : « dont N confirmées avec le mot de passe de l'établissement ».
+- Tests : 17/17 e2e (nouveau test « mot de passe facultatif de l'établissement »).
