@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getDashboard } from "@/lib/schools";
 import { categoryLabel, CATEGORIES, MIN_FOR_CITY, MIN_FOR_DEPARTMENT } from "@/lib/categories";
 import { solidarityTotal } from "@/lib/solidarity";
+import { logError } from "@/lib/log";
 import { AreaExplorer, DailyChart, HBarChart } from "@/components/Charts";
 
 export const dynamic = "force-dynamic";
@@ -11,8 +12,26 @@ export const metadata: Metadata = {
   description: "Les problèmes signalés par les lycéens et les étudiants sur VOIX, agrégés par ville.",
 };
 
+/** Une base lente ne doit jamais laisser la page en chargement infini. */
+const within = <T,>(p: Promise<T>, ms = 8000) =>
+  Promise.race([p, new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`délai dépassé (${ms / 1000} s)`)), ms))]);
+
 export default async function Dashboard() {
-  const [d, solidaires] = await Promise.all([getDashboard(MIN_FOR_DEPARTMENT, MIN_FOR_CITY), solidarityTotal().catch(() => 0)]);
+  const [d, solidaires] = await Promise.all([
+    within(getDashboard(MIN_FOR_DEPARTMENT, MIN_FOR_CITY)).catch((e) => {
+      void logError("tableau", e);
+      return null;
+    }),
+    within(solidarityTotal()).catch(() => 0),
+  ]);
+  if (!d) {
+    return (
+      <div className="mx-auto max-w-5xl px-4 pt-10">
+        <h1 className="font-display text-4xl font-bold sm:text-6xl">Tableau national</h1>
+        <p className="card mt-8 p-6 text-ink-2">Le tableau est momentanément indisponible. Réessaie dans quelques minutes.</p>
+      </div>
+    );
+  }
   const short = (k: string) => CATEGORIES.find((c) => c.key === k)?.short ?? categoryLabel(k);
 
   return (
