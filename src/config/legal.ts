@@ -21,6 +21,7 @@ export const LEGAL = {
 
 export const RETENTION = [
   ["Participations (préoccupations soutenues)", "12 mois après la participation, puis suppression"],
+  ["Soutiens « Je suis solidaire »", "12 mois, puis suppression"],
   ["Empreinte d'IP du jour (anti-abus)", "Effacée au bout de 30 jours"],
   ["Messages écrits refusés", "Supprimés 30 jours après la décision"],
   ["Messages écrits publiés ou en attente", "12 mois, ou jusqu'à suppression demandée"],

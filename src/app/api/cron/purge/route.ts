@@ -14,6 +14,9 @@ export async function GET(req: Request) {
     const r = await sql.begin(async (tx) => {
       const ip = await tx`update participations set ip_hash = 'purged' where ip_hash <> 'purged' and created_at < now() - interval '30 days'`;
       const parts = await tx`delete from participations where created_at < now() - interval '12 months'`;
+      await tx`update solidarity set ip_hash = 'purged' where ip_hash <> 'purged' and created_at < now() - interval '30 days'`;
+      await tx`delete from solidarity where created_at < now() - interval '12 months'`;
+      await tx`delete from code_groups g where not exists (select 1 from participations p where p.school_uai = g.school_uai and p.code_hash = g.code_hash)`;
       const rejected = await tx`delete from reports where status = 'rejected' and moderated_at < now() - interval '30 days'`;
       const rl = await tx`delete from rate_limits where window_start < now() - interval '48 hours'`;
       await tx`delete from pow_used where used_at < now() - interval '1 day'`;

@@ -108,7 +108,9 @@ export default async function SchoolPage({ params, searchParams }: Props) {
             Ton soutien est compté à part, il ne change pas leurs préoccupations.
           </p>
           <div className="mt-3"><SolidarityButton uai={uai} done={solidary} /></div>
-          <p className="mt-2 text-sm"><strong className="tabular-nums">{solidaires.toLocaleString("fr-FR")}</strong> personne{solidaires > 1 ? "s" : ""} solidaire{solidaires > 1 ? "s" : ""}</p>
+          {solidaires > 0 && (
+            <p className="mt-2 text-sm"><strong className="tabular-nums">{solidaires.toLocaleString("fr-FR")}</strong> personne{solidaires > 1 ? "s" : ""} solidaire{solidaires > 1 ? "s" : ""}</p>
+          )}
         </div>
       </div>
 

@@ -268,7 +268,7 @@ test("« Je suis solidaire » : soutien des non-élèves compté à part", async
   await p.goto(`/lycee/${SCHOOL}`);
   const total = await p.getByTestId("total").textContent();
   const box = p.getByTestId("solidarite");
-  await expect(box).toContainText("0 personne solidaire");
+  await expect(box).not.toContainText("personne solidaire");
   await box.getByRole("button", { name: "☮ Je suis solidaire" }).click();
   await expect(box.getByText("Tu es solidaire")).toBeVisible();
   await expect(box).toContainText("1 personne solidaire");
