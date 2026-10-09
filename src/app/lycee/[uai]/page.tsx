@@ -8,6 +8,9 @@ import { SupportButton } from "@/components/SupportButton";
 import { ShareBox } from "@/components/ShareBox";
 import { words } from "@/lib/kind";
 import { siteUrl } from "@/lib/site";
+import { getDevice } from "@/lib/device";
+import { isSolidary, schoolSolidarity } from "@/lib/solidarity";
+import { SolidarityButton } from "@/components/SolidarityButton";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +44,13 @@ export default async function SchoolPage({ params, searchParams }: Props) {
   const w = words(school.kind);
 
   // Juste après une participation, on lit les résultats frais pour que la personne voie l'effet de sa voix.
-  const [results, mine] = await Promise.all([merci ? getSchoolResultsFresh(uai) : getSchoolResultsCached(uai), myCategories(uai)]);
+  const device = await getDevice(false);
+  const [results, mine, solidaires, solidary] = await Promise.all([
+    merci ? getSchoolResultsFresh(uai) : getSchoolResultsCached(uai),
+    myCategories(uai),
+    schoolSolidarity(uai),
+    isSolidary(uai, device?.hash),
+  ]);
   const showPercent = results.total >= MIN_FOR_PERCENT;
   const url = `${siteUrl()}/lycee/${uai}`;
   const max = Math.max(1, ...results.categories.map((c) => c.supports));
@@ -90,6 +99,16 @@ export default async function SchoolPage({ params, searchParams }: Props) {
             {mine.length ? "Ajouter un signalement" : `Faire entendre ${w.my}`}
           </Link>
           {!merci && <ShareBox url={url} name={school.name} kind={school.kind} compact />}
+        </div>
+
+        <div id="solidarite" data-testid="solidarite" className="mx-auto mt-8 max-w-md rounded-[1.5rem] bg-card px-5 py-5">
+          <p className="font-semibold">Pas {w.people === "élèves" ? "élève" : "étudiant"} ici&nbsp;?</p>
+          <p className="mt-1 text-sm text-muted">
+            Parent, prof, ancien {w.people === "élèves" ? "élève" : "étudiant"}, voisin : montre aux {w.people} que toute la France est avec eux.
+            Ton soutien est compté à part, il ne change pas leurs préoccupations.
+          </p>
+          <div className="mt-3"><SolidarityButton uai={uai} done={solidary} /></div>
+          <p className="mt-2 text-sm"><strong className="tabular-nums">{solidaires.toLocaleString("fr-FR")}</strong> personne{solidaires > 1 ? "s" : ""} solidaire{solidaires > 1 ? "s" : ""}</p>
         </div>
       </div>
 

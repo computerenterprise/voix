@@ -45,6 +45,10 @@ export default function Privacy() {
           le même mot de passe. Ce mot de passe est convenu entre élèves et commun à tout un groupe : il ne permet pas
           de t&apos;identifier.
         </li>
+        <li>
+          <strong>Si tu cliques « Je suis solidaire »</strong> : nous enregistrons l&apos;établissement soutenu, l&apos;empreinte
+          de ton navigateur (pour ne compter qu&apos;une fois) et l&apos;empreinte du jour de ta connexion (contre les abus).
+        </li>
       </ul>
 
       <h2>Pourquoi, et sur quelle base</h2>

@@ -99,8 +99,7 @@ export function ParticipateForm({ uai, already, kind }: { uai: string; already: 
         />
         <p className="mt-1.5 text-xs text-muted">
           Une suite de mots convenue entre élèves de ton établissement. Les voix qui donnent la même sont regroupées pour
-          dresser l&apos;état de l&apos;établissement. Elle ne dit rien sur toi. Ne la publie jamais en ligne. Sans mot de
-          passe, ta voix compte aussi.
+          dresser l&apos;état de l&apos;établissement. Elle ne dit rien sur toi. Ne la publie jamais en ligne.
         </p>
       </div>
 

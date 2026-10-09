@@ -20,6 +20,10 @@ export default async function ParticipatePage({ params }: { params: Promise<{ ua
       <Link href={`/lycee/${uai}`} className="link text-sm">‹ {school.name}</Link>
       <h1 className="font-display mt-4 text-[2.25rem] font-bold leading-[1.08] sm:text-5xl">Qu&apos;est-ce qui coince dans {words(school.kind).your}&nbsp;?</h1>
       <p className="mt-3 text-lg text-muted">Choisis une ou plusieurs préoccupations. C&apos;est anonyme : on ne te demande ni nom, ni contact.</p>
+      <p className="mt-2 text-sm text-muted">
+        Tu n&apos;es pas {words(school.kind).people === "élèves" ? "élève" : "étudiant"} ici&nbsp;? Ce formulaire est réservé aux {words(school.kind).people}.
+        Pour les soutenir, utilise le bouton <Link href={`/lycee/${uai}#solidarite`} className="link">« Je suis solidaire »</Link>.
+      </p>
       <ParticipateForm uai={uai} already={mine} kind={school.kind} />
     </div>
   );

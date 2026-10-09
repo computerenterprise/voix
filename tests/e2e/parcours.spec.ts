@@ -260,6 +260,26 @@ test("mot de passe libre : regroupement par établissement et tableau publié pa
   await sql.end();
 });
 
+test("« Je suis solidaire » : soutien des non-élèves compté à part", async ({ browser }) => {
+  const ctx = await browser.newContext({ locale: "fr-FR" });
+  const p = await ctx.newPage();
+  await p.goto(`/lycee/${SCHOOL}/participer`);
+  await expect(p.getByRole("link", { name: "« Je suis solidaire »" })).toBeVisible();
+  await p.goto(`/lycee/${SCHOOL}`);
+  const total = await p.getByTestId("total").textContent();
+  const box = p.getByTestId("solidarite");
+  await expect(box).toContainText("0 personne solidaire");
+  await box.getByRole("button", { name: "☮ Je suis solidaire" }).click();
+  await expect(box.getByText("Tu es solidaire")).toBeVisible();
+  await expect(box).toContainText("1 personne solidaire");
+  // Ne touche pas aux préoccupations des élèves, et ne compte qu'une fois par navigateur
+  await p.reload();
+  await expect(p.getByTestId("total")).toHaveText(total!);
+  await expect(box.getByText("Tu es solidaire")).toBeVisible();
+  await expect(box).toContainText("1 personne solidaire");
+  await ctx.close();
+});
+
 test("partage : lien unique, Open Graph et images", async ({ page, request }) => {
   await page.goto(`/lycee/${SCHOOL}`);
   const og = await page.locator('meta[property="og:image"]').getAttribute("content");

@@ -44,6 +44,11 @@ export default async function Home() {
                 <p className="mt-1.5 text-xs leading-snug text-muted sm:text-sm">{l}</p>
               </div>
             ))}
+            {stats.solidaires > 0 && (
+              <p className="col-span-3 mt-1 text-center text-sm text-muted">
+                ☮ <strong className="tabular-nums text-ink">{fmt(stats.solidaires)}</strong> personne{stats.solidaires > 1 ? "s" : ""} solidaire{stats.solidaires > 1 ? "s" : ""} partout en France
+              </p>
+            )}
           </div>
         ) : (
           <div className="card px-6 py-8 text-center">
