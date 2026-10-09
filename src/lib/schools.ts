@@ -3,6 +3,7 @@ import { memo } from "./memo";
 import { sql } from "./db";
 import { queryTokens, normalize } from "./normalize";
 import { CATEGORY_KEYS, type CategoryKey, type ConcernStatus } from "./categories";
+import { publishedBoard } from "./code-groups";
 
 export type SchoolLite = {
   uai: string;
@@ -82,8 +83,8 @@ export type SchoolResults = {
   total: number;
   /** Participations enregistrées mais non comptées, en attente de vérification anti-abus. */
   verifying: number;
-  /** Participations comptées confirmées avec le mot de passe de l'établissement. */
-  withCode: number;
+  /** Tableau des voix au même mot de passe, publié par l'équipe (votes = 0 si rien n'est publié). */
+  board: Awaited<ReturnType<typeof publishedBoard>>;
   categories: CategoryResult[];
   testimonies: { category: CategoryKey; body: string; created_at: string }[];
   pendingReports: number;
@@ -91,10 +92,9 @@ export type SchoolResults = {
 };
 
 async function computeSchoolResults(uai: string): Promise<SchoolResults> {
-  const [[{ total, verifying, withCode }], supports, reports, statuses, testimonies] = await Promise.all([
-    sql<{ total: number; verifying: number; withCode: number }[]>`
-      select count(*) filter (where status = 'counted')::int as total, count(*) filter (where status = 'pending')::int as verifying,
-             count(*) filter (where status = 'counted' and with_code)::int as "withCode"
+  const [[{ total, verifying }], supports, reports, statuses, testimonies, board] = await Promise.all([
+    sql<{ total: number; verifying: number }[]>`
+      select count(*) filter (where status = 'counted')::int as total, count(*) filter (where status = 'pending')::int as verifying
       from participations where school_uai = ${uai}`,
     sql<{ category: string; n: number }[]>`
       select c as category, count(*)::int as n
@@ -110,6 +110,7 @@ async function computeSchoolResults(uai: string): Promise<SchoolResults> {
       select r.category, r.body, r.created_at from reports r
       join participations p on p.id = r.participation_id and p.status = 'counted'
       where r.school_uai = ${uai} and r.status = 'approved' order by r.moderated_at desc limit 6`,
+    publishedBoard(uai),
   ]);
 
   const categories: CategoryResult[] = CATEGORY_KEYS.map((key) => {
@@ -128,7 +129,7 @@ async function computeSchoolResults(uai: string): Promise<SchoolResults> {
   return {
     total,
     verifying,
-    withCode,
+    board,
     categories,
     testimonies: testimonies.map((t) => ({ ...t, created_at: t.created_at.toISOString() })),
     pendingReports: reports.filter((r) => r.status === "pending").reduce((a, r) => a + r.n, 0),

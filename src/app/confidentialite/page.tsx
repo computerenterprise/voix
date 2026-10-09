@@ -40,9 +40,10 @@ export default function Privacy() {
           uniquement pour détecter les abus (envois en masse). Ton adresse IP elle-même n&apos;est pas enregistrée.
         </li>
         <li>
-          <strong>Si tu saisis le mot de passe de ton établissement</strong> (facultatif) : nous enregistrons seulement
-          qu&apos;il était correct (oui ou non). Ce mot de passe est commun à tout l&apos;établissement et ne permet pas
-          de t&apos;identifier ; nous ne le conservons pas en clair.
+          <strong>Si tu saisis un mot de passe</strong> (facultatif) : nous enregistrons seulement son empreinte
+          chiffrée, liée à l&apos;établissement, jamais les mots eux-mêmes. Elle sert à regrouper les voix qui ont donné
+          le même mot de passe. Ce mot de passe est convenu entre élèves et commun à tout un groupe : il ne permet pas
+          de t&apos;identifier.
         </li>
       </ul>
 

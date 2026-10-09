@@ -56,7 +56,7 @@ export default async function SchoolPage({ params, searchParams }: Props) {
           <p className="font-display mt-4 text-3xl font-bold">{verif ? "Merci, ta voix est enregistrée." : "Merci, ta voix est comptée."}</p>
           <p className="mx-auto mt-2 max-w-md leading-relaxed text-white/70">
             {verif ? `Beaucoup de participations arrivent de la même connexion pour ${w.the} : la tienne sera comptée après une vérification anti-triche. ` : ""}
-            {code ? "Mot de passe reconnu : ta voix est confirmée. " : ""}
+            {code ? "Ton mot de passe est enregistré : ta voix rejoint celles des élèves qui ont le même. " : ""}
             {ecrit ? "Ton message sera relu par l'équipe avant toute publication. " : ""}
             Plus vous êtes nombreux, plus les priorités de {w.your} sont lisibles. Partage la page à ta classe.
           </p>
@@ -79,9 +79,6 @@ export default async function SchoolPage({ params, searchParams }: Props) {
         <div className="rise rise-3 mt-8">
           <p data-testid="total" className="font-display text-6xl font-semibold tabular-nums leading-none">{results.total.toLocaleString("fr-FR")}</p>
           <p className="mt-2 text-muted">participation{results.total > 1 ? "s" : ""} comptabilisée{results.total > 1 ? "s" : ""}</p>
-          {results.withCode > 0 && (
-            <p className="mt-1 text-sm font-medium text-ok">dont {results.withCode.toLocaleString("fr-FR")} confirmée{results.withCode > 1 ? "s" : ""} avec le mot de passe de l&apos;établissement</p>
-          )}
           {results.verifying > 0 && (
             <p className="mt-1 text-sm text-muted">+ {results.verifying.toLocaleString("fr-FR")} en cours de vérification</p>
           )}
@@ -95,6 +92,35 @@ export default async function SchoolPage({ params, searchParams }: Props) {
           {!merci && <ShareBox url={url} name={school.name} kind={school.kind} compact />}
         </div>
       </div>
+
+      {results.board.votes > 0 && (
+        <section className="mt-12 rounded-[1.75rem] bg-black p-6 text-white sm:p-8" aria-labelledby="etat">
+          <p className="text-sm font-medium text-[#7ee0a1]">Voix confirmées par un mot de passe commun</p>
+          <h2 id="etat" className="font-display mt-1 text-2xl font-bold sm:text-3xl">
+            L&apos;état {w.ofThe} selon {results.board.votes.toLocaleString("fr-FR")} {w.people}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-white/70">
+            Ces {w.people} ont participé avec le même mot de passe, choisi entre eux et transmis de bouche à oreille.
+            L&apos;équipe VOIX a vérifié ce groupe avant de le publier. Le mot de passe ne dit rien sur personne.
+          </p>
+          <ul className="mt-5 grid gap-3">
+            {results.board.categories.filter((c) => c.n > 0).map((c) => {
+              const pct = Math.round((c.n / results.board.votes) * 100);
+              return (
+                <li key={c.key}>
+                  <div className="flex items-baseline justify-between gap-3 text-[0.95rem]">
+                    <span><span aria-hidden>{emoji(c.key)} </span>{categoryLabel(c.key, school.kind)}</span>
+                    <span className="shrink-0 tabular-nums font-semibold">{pct}%</span>
+                  </div>
+                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/15" aria-hidden>
+                    <div className="h-full rounded-full bg-[#7ee0a1]" style={{ width: `${pct}%` }} />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       <section className="mt-16" aria-labelledby="prio">
         <h2 id="prio" className="font-display text-3xl font-bold">Préoccupations signalées.</h2>

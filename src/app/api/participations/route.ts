@@ -5,7 +5,7 @@ import { clientIp, json, sameOrigin } from "@/lib/request";
 import { ipHash } from "@/lib/security";
 import { logError } from "@/lib/log";
 import { verifyPow } from "@/lib/pow";
-import { checkSchoolCode } from "@/lib/school-code";
+import { CODE_MIN_LENGTH, codeHash, normalizeCode } from "@/lib/code-groups";
 
 export const dynamic = "force-dynamic";
 
@@ -34,19 +34,16 @@ export async function POST(req: Request) {
     if (await verifyPow(parsed.data.pow, parsed.data.uai)) {
       return json({ error: "La vérification anti-robot a échoué. Recharge la page et réessaie." }, 400);
     }
-    // Mot de passe facultatif : un mauvais mot de passe est signalé (pour corriger ou laisser vide), sans bloquer d'autre façon.
-    let withCode = false;
+    // Mot de passe facultatif et libre : seule son empreinte (liée à l'établissement) est enregistrée.
+    let hash: string | null = null;
     if (parsed.data.code) {
-      if (!(await rateLimit(`code:${ip}`, 10, 3600))) {
-        return json({ error: "Trop d'essais de mot de passe. Laisse le champ vide ou réessaie dans une heure." }, 429);
+      if (normalizeCode(parsed.data.code).length < CODE_MIN_LENGTH) {
+        return json({ error: "Ce mot de passe est trop court : utilise au moins deux ou trois mots, ou laisse le champ vide." }, 422);
       }
-      withCode = await checkSchoolCode(parsed.data.uai, parsed.data.code);
-      if (!withCode) {
-        return json({ error: "Ce mot de passe ne correspond pas à cet établissement. Vérifie-le, ou laisse le champ vide : ta participation comptera quand même." }, 422);
-      }
+      hash = codeHash(parsed.data.uai, parsed.data.code);
     }
     const device = await getDevice(true);
-    const res = await submitParticipation(parsed.data, { deviceHash: device!.hash, ipHash: ip, newDevice: device!.isNew, withCode });
+    const res = await submitParticipation(parsed.data, { deviceHash: device!.hash, ipHash: ip, newDevice: device!.isNew, codeHash: hash });
     if (!res.ok) return json({ error: res.error }, res.status);
     return json({ ok: true, reportPending: res.reportPending, verifying: res.status === "pending" });
   } catch (e) {

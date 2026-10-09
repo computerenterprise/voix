@@ -68,12 +68,15 @@ Parcours couverts :
   4 instituts situés à l'étranger écartés. Recherche vérifiée : « sciences po », « skema », « polytechnique ».
   Tests : 16/16 e2e.
 
-## Mot de passe facultatif par établissement (2026-10-09)
+## Mot de passe libre, regroupé par établissement (2026-10-09)
 
-- L'admin définit, change ou retire un mot de passe (trois mots) par établissement : seule une empreinte HMAC liée à
-  l'UAI est stockée. Le champ n'apparaît sur le formulaire que si un mot de passe existe.
-- Saisie tolérante (majuscules, accents, espaces). Mauvais mot de passe : message clair, vote non enregistré tant
-  qu'on ne corrige pas ou ne vide pas le champ. 10 essais par heure et par connexion.
-- Une voix confirmée n'est pas mise « en vérification » par la règle des connexions partagées (wifi du lycée).
-- Page publique : « dont N confirmées avec le mot de passe de l'établissement ».
-- Tests : 17/17 e2e (nouveau test « mot de passe facultatif de l'établissement »).
+- Champ « Mot de passe de ton établissement » toujours proposé, facultatif. Les élèves le choisissent entre eux
+  (ex. trois mots) ; VOIX ne le définit pas.
+- Seule une empreinte HMAC (établissement + mot de passe normalisé) est enregistrée. Saisie tolérante : majuscules,
+  accents, ponctuation et espaces ignorés ; l'ordre des mots compte. Moins de 6 caractères : refusé avec un message.
+- Les voix au même mot de passe forment un groupe. À partir de `CODE_GROUP_MIN` voix (5 par défaut), le groupe est
+  « confirmé » : l'admin (Lycées) voit son tableau, le nombre de connexions différentes, peut compter d'un clic ses
+  voix en vérification et publier ou retirer le tableau.
+- Page publique : bloc « L'état du lycée selon N élèves » uniquement pour les groupes publiés.
+- Le mot de passe ne dispense plus de la vérification anti-triche (il est libre, donc invérifiable seul).
+- Tests : 17/17 e2e (test « mot de passe libre : regroupement par établissement et tableau publié par l'équipe »).

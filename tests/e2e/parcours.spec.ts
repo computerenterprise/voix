@@ -197,42 +197,67 @@ test("administration protégée et modération", async ({ page, request }) => {
   if (r.status() === 200) expect(await r.text()).not.toContain("toilettes");
 });
 
-test("mot de passe facultatif de l'établissement", async ({ page, browser }) => {
+test("mot de passe libre : regroupement par établissement et tableau publié par l'équipe", async ({ page, browser, playwright, baseURL }) => {
   const OTHER = "9990003C";
-  // Sans mot de passe défini, le champ n'apparaît pas
-  await page.goto(`/lycee/${OTHER}/participer`);
-  await expect(page.getByLabel(/Mot de passe de ton établissement/)).toHaveCount(0);
+  const sql = db();
+  // Le champ est toujours proposé ; un mot de passe trop court est refusé avec un message clair
+  const ctx = await browser.newContext({ locale: "fr-FR" });
+  const p = await ctx.newPage();
+  await p.goto(`/lycee/${OTHER}/participer`);
+  await p.getByText("État des bâtiments", { exact: true }).click();
+  await p.getByLabel(/Mot de passe de ton établissement/).fill("abc");
+  await p.waitForTimeout(1600);
+  await p.getByRole("button", { name: /^Envoyer/ }).click();
+  await expect(p.locator("p[role=alert]")).toContainText("trop court");
+  await p.getByLabel(/Mot de passe de ton établissement/).fill("Soleil cartable tempête");
+  await p.getByRole("button", { name: /^Envoyer/ }).click();
+  await expect(p).toHaveURL(/code=1/);
+  await expect(p.getByText("Ton mot de passe est enregistré")).toBeVisible();
+  await ctx.close();
+
+  // Quatre autres élèves (navigateurs distincts) : majuscules, accents et espaces ne comptent pas. Un cinquième se trompe.
+  for (const code of ["soleil cartable tempete", "  SOLEIL  Cartable  TEMPÊTE ", "soleil-cartable-tempête", "Soleil, cartable, tempête", "lune trousse orage"]) {
+    const r = await playwright.request.newContext({ baseURL });
+    const res = await r.post("/api/participations", {
+      headers: { origin: baseURL! },
+      data: { uai: OTHER, categories: ["batiments", "profs_absents"], code, elapsed: 5000, pow: await proof(r, OTHER) },
+    });
+    expect(res.status()).toBe(200);
+    await r.dispose();
+  }
+  const rows = await sql`select code_hash from participations where school_uai = ${OTHER} and code_hash is not null`;
+  expect(rows).toHaveLength(6);
+  expect(new Set(rows.map((r) => r.code_hash)).size).toBe(2);
+  expect(rows.some((r) => String(r.code_hash).includes("soleil"))).toBe(false); // jamais en clair
+
+  // Rien n'est publié tant que l'équipe n'a pas validé le groupe
+  await page.goto(`/lycee/${OTHER}`);
+  await expect(page.getByText("Voix confirmées par un mot de passe commun")).toHaveCount(0);
 
   await page.goto("/admin/connexion");
   await page.getByLabel("Mot de passe").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Se connecter" }).click();
   await expect(page).toHaveURL(/\/admin$/);
-  await page.goto(`/admin/lycees?q=curie&uai=${OTHER}`);
-  await page.getByLabel("Nouveau mot de passe").fill("Soleil cartable tempête");
-  await page.getByRole("button", { name: "Définir" }).click();
-  await expect(page.getByText(/Actif \(version 1/)).toBeVisible();
-  const sql = db();
-  const [c] = await sql`select code_hash from school_codes where school_uai = ${OTHER}`;
-  expect(c.code_hash).not.toContain("soleil"); // jamais en clair
+  await page.goto("/admin/lycees");
+  await expect(page.getByText("Groupes confirmés à examiner")).toBeVisible();
+  await page.getByRole("link", { name: /Marie-Curie/ }).click();
+  const group = page.getByTestId("code-group");
+  await expect(group).toHaveCount(1);
+  await expect(group).toContainText("5 voix");
+  await expect(page.getByText(/\+ 1 petit groupe de moins de 5 voix/)).toBeVisible();
+  // Même connexion pour tous (le wifi d'un lycée) : une partie est en vérification, comptée d'un clic
+  await group.getByRole("button", { name: /Compter les \d+ voix en vérification/ }).click();
+  await expect(group.getByRole("button", { name: /Compter les/ })).toHaveCount(0);
+  await group.getByRole("button", { name: "Publier le tableau" }).click();
+  await expect(group.getByText("publié", { exact: true })).toBeVisible();
 
-  const ctx = await browser.newContext({ locale: "fr-FR" });
-  const p = await ctx.newPage();
-  await p.goto(`/lycee/${OTHER}/participer`);
-  await p.getByText("État des bâtiments", { exact: true }).click();
-  await p.getByLabel(/Mot de passe de ton établissement/).fill("lune trousse orage");
-  await p.waitForTimeout(1600);
-  await p.getByRole("button", { name: /^Envoyer/ }).click();
-  await expect(p.locator("p[role=alert]")).toContainText("ne correspond pas");
-  // Majuscules, accents et espaces ne comptent pas
-  await p.getByLabel(/Mot de passe de ton établissement/).fill("  SOLEIL  cartable  tempete ");
-  await p.getByRole("button", { name: /^Envoyer/ }).click();
-  await expect(p).toHaveURL(/code=1/);
-  await expect(p.getByText("Mot de passe reconnu")).toBeVisible();
-  await expect(p.getByText(/dont 1 confirmée avec le mot de passe/)).toBeVisible();
-  const [r] = await sql`select with_code from participations where school_uai = ${OTHER}`;
-  expect(r.with_code).toBe(true);
+  await page.goto(`/lycee/${OTHER}?merci=1`);
+  await expect(page.getByText("Voix confirmées par un mot de passe commun")).toBeVisible();
+  await expect(page.getByRole("heading", { name: /L.état du lycée selon 5 élèves/ })).toBeVisible();
+  // Les 5 voix du groupe sont comptées ; la voix isolée, venue de la même connexion, reste en vérification
+  await expect(page.getByTestId("total")).toHaveText("5");
+  await expect(page.getByText("+ 1 en cours de vérification")).toBeVisible();
   await sql.end();
-  await ctx.close();
 });
 
 test("partage : lien unique, Open Graph et images", async ({ page, request }) => {

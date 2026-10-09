@@ -5,7 +5,7 @@ import { z } from "zod";
 import { sql } from "@/lib/db";
 import { audit, isAdmin } from "@/lib/admin-auth";
 import { CATEGORY_KEYS } from "@/lib/categories";
-import { setSchoolCode } from "@/lib/school-code";
+import { GROUP_MIN, listGroups, setGroupPublished, validateGroup } from "@/lib/code-groups";
 
 async function guard() {
   if (!(await isAdmin())) throw new Error("Non autorisé");
@@ -100,15 +100,32 @@ export async function setConcernStatus(form: FormData) {
   revalidatePath("/admin", "layout");
 }
 
-/** Définit, change ou retire le mot de passe facultatif d'un établissement (seule l'empreinte est enregistrée). */
-export async function updateSchoolCode(form: FormData) {
+const groupForm = (form: FormData) => ({
+  uai: z.string().regex(/^\d{7}[A-Z]$/).parse(form.get("uai")),
+  hash: z.string().regex(/^[\w-]{16,128}$/).parse(form.get("hash")),
+});
+
+/** Publie ou retire le tableau d'un groupe (voix au même mot de passe) sur la page de l'établissement. */
+export async function publishCodeGroup(form: FormData) {
   await guard();
-  const uai = z.string().regex(/^\d{7}[A-Z]$/).parse(form.get("uai"));
-  const remove = form.get("remove") === "1";
-  const code = remove ? null : z.string().trim().min(5).max(120).parse(form.get("code"));
-  await setSchoolCode(uai, code);
-  await audit(remove ? "school_code_removed" : "school_code_set", `school:${uai}`);
-  revalidatePath("/admin/lycees");
+  const { uai, hash } = groupForm(form);
+  const publish = form.get("publish") === "1";
+  if (publish) {
+    const group = (await listGroups(uai)).find((g) => g.code_hash === hash);
+    if (!group || group.votes < GROUP_MIN) throw new Error("Groupe trop petit pour être publié.");
+  }
+  await setGroupPublished(uai, hash, publish);
+  await audit(publish ? "code_group_published" : "code_group_unpublished", `school:${uai}`, hash.slice(0, 8));
+  revalidatePath("/admin", "layout");
+}
+
+/** Compte les voix « en vérification » d'un groupe : un mot de passe commun partagé sur le même wifi. */
+export async function validateCodeGroup(form: FormData) {
+  await guard();
+  const { uai, hash } = groupForm(form);
+  const n = await validateGroup(uai, hash);
+  await audit("code_group_validated", `school:${uai}`, `${hash.slice(0, 8)} (${n})`);
+  revalidatePath("/admin", "layout");
 }
 
 export async function clearErrors() {

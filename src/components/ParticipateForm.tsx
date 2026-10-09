@@ -6,7 +6,7 @@ import Link from "next/link";
 import { CATEGORIES, categoryLabel } from "@/lib/categories";
 import { consumeProof, prepareProof } from "@/lib/pow-client";
 
-export function ParticipateForm({ uai, already, kind, hasCode = false }: { uai: string; already: string[]; kind?: string; hasCode?: boolean }) {
+export function ParticipateForm({ uai, already, kind }: { uai: string; already: string[]; kind?: string }) {
   const router = useRouter();
   const startedAt = useRef(Date.now());
   const [selected, setSelected] = useState<string[]>([]);
@@ -84,26 +84,25 @@ export function ParticipateForm({ uai, already, kind, hasCode = false }: { uai: 
         </div>
       </fieldset>
 
-      {hasCode && (
-        <div className="mt-8">
-          <label htmlFor="code" className="text-sm font-medium text-muted">Mot de passe de ton établissement&nbsp;? Facultatif.</label>
-          <input
-            id="code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            maxLength={120}
-            autoComplete="off"
-            autoCapitalize="none"
-            spellCheck={false}
-            placeholder="Ex. : trois mots partagés entre élèves"
-            className="mt-2 block w-full rounded-2xl bg-card px-4 py-3.5 text-[1.0625rem] outline-none ring-2 ring-transparent focus:bg-white focus:ring-signal"
-          />
-          <p className="mt-1.5 text-xs text-muted">
-            Il est commun à tout l&apos;établissement : il ne dit rien sur toi. Il permet seulement d&apos;afficher à part les
-            voix confirmées par des élèves. Sans mot de passe, ta voix compte aussi.
-          </p>
-        </div>
-      )}
+      <div className="mt-8">
+        <label htmlFor="code" className="text-sm font-medium text-muted">Mot de passe de ton établissement&nbsp;? Facultatif.</label>
+        <input
+          id="code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          maxLength={120}
+          autoComplete="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          placeholder="Ex. : trois mots choisis entre élèves"
+          className="mt-2 block w-full rounded-2xl bg-card px-4 py-3.5 text-[1.0625rem] outline-none ring-2 ring-transparent focus:bg-white focus:ring-signal"
+        />
+        <p className="mt-1.5 text-xs text-muted">
+          Une suite de mots convenue entre élèves de ton établissement. Les voix qui donnent la même sont regroupées pour
+          dresser l&apos;état de l&apos;établissement. Elle ne dit rien sur toi. Ne la publie jamais en ligne. Sans mot de
+          passe, ta voix compte aussi.
+        </p>
+      </div>
 
       <div className="mt-8">
         <p className="text-sm font-medium text-muted">Un détail à ajouter&nbsp;? Facultatif.</p>
